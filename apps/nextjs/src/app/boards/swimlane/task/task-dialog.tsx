@@ -1,0 +1,726 @@
+"use client"
+
+import DatePickerWithClear from "@/components/custom-ui/date-picker-with-clear"
+import InlineEditableInput from "@/components/custom-ui/inline-editable-input"
+import InlineEditableTextarea from "@/components/custom-ui/inline-editable-textarea"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
+import {
+  Combobox,
+  ComboboxChips,
+  ComboboxChipsInput,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+  ComboboxValue,
+} from "@/components/ui/combobox"
+import { Dialog, DialogContent } from "@/components/ui/dialog"
+import { Field, FieldGroup } from "@/components/ui/field"
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+  InputGroupTextarea,
+} from "@/components/ui/input-group"
+import type { ComboboxOption } from "@/lib/combobox-utils"
+import { useTRPC } from "@/trpc/react"
+import { animations } from "@formkit/drag-and-drop"
+import { useDragAndDrop } from "@formkit/drag-and-drop/react"
+import type {
+  ChecklistItemType,
+  CommentType,
+  TagType,
+  TaskType,
+} from "@kando/api"
+import type { TaskPriorityEnumType, TaskStatusEnumType } from "@kando/db/enums"
+import { TaskPriorityEnumValues, TaskStatusEnumValues } from "@kando/db/enums"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import {
+  AlignLeft,
+  CheckIcon,
+  ChevronDownIcon,
+  Flag,
+  GoalIcon,
+  GripVerticalIcon,
+  Kanban,
+  TagIcon,
+  TrashIcon,
+  XIcon,
+} from "lucide-react"
+import { useEffect, useState } from "react"
+import { toast } from "sonner"
+import DeleteCommentConfirmation from "./delete-comment-confirmation"
+
+export function TaskDialog({
+  task,
+  open,
+  close,
+}: {
+  task: TaskType
+  open: boolean
+  close: () => void
+}) {
+  // init form state
+  const [title, setTitle] = useState("")
+  const [description, setDescription] = useState("")
+  const [status, setStatus] = useState<TaskStatusEnumType>(task.status)
+  const [dueDate, setDueDate] = useState("")
+  const [priority, setPriority] = useState<TaskPriorityEnumType | null>(null)
+  const [position, setPosition] = useState(9999)
+  useEffect(() => {
+    // reset form between openings of the dialog
+    if (open) {
+      setTitle(task.title)
+      setDescription(task.description || "")
+      setStatus(task.status)
+      setDueDate(task.dueDate || "")
+      setPriority(task.priority ?? null)
+      setPosition(task.position ?? 9999)
+    }
+  }, [open])
+
+  const trpc = useTRPC()
+  const queryClient = useQueryClient()
+  const updateTask = useMutation(
+    trpc.tasks.update.mutationOptions({
+      onSuccess: async () => {
+        await queryClient.invalidateQueries(trpc.tasks.pathFilter())
+        toast.success("Task updated")
+      },
+      onError: (error) => {
+        toast.error("Failed to update task")
+        console.error(error)
+      },
+    })
+  )
+  const handleSubmit = async ({
+    updates,
+  }: {
+    updates: {
+      title: string
+      description: string
+      status: TaskStatusEnumType
+      dueDate: string
+      priority: TaskPriorityEnumType | null
+      position: number
+    }
+  }) => {
+    await updateTask.mutateAsync({
+      id: task.id,
+      title: updates.title,
+      description: updates.description || undefined,
+      status: updates.status,
+      dueDate: updates.dueDate || null,
+      priority: updates.priority ?? null,
+      position: updates.position,
+    })
+  }
+
+  // const [isCopied, setIsCopied] = useState(false)
+  // const handleCopyToClipboard = () => {
+  //   navigator.clipboard.writeText(title)
+  //   setIsCopied(true)
+  //   setTimeout(() => setIsCopied(false), 2000)
+  // }
+
+  return (
+    <Dialog open={open} onOpenChange={(open) => open === false && close()}>
+      <DialogContent className="w-3/4 sm:max-w-5xl" showCloseButton={false}>
+        {/* custom header section for the task dialog */}
+        {/* <div className="-m-4 flex rounded-lg">
+          // some more ideas: put the status drop down at the start, have chevrons to cycle through tasks, add an ellipsis and have a delete, duplicate, etc
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={close}
+            className="mt-2 mr-2 ml-auto"
+          >
+            <XIcon className="size-4" />
+          </Button>
+        </div> */}
+
+        <div className="no-scrollbar -mx-4 grid max-h-[75vh] gap-4 overflow-y-auto px-4 lg:grid-cols-2">
+          <div className="space-y-3 lg:min-w-0">
+            <Field>
+              <InlineEditableInput
+                value={title}
+                onChange={(value) => setTitle(value)}
+                placeholder="Task title"
+                onBlur={() =>
+                  handleSubmit({
+                    updates: {
+                      title,
+                      description,
+                      status,
+                      dueDate,
+                      priority,
+                      position,
+                    },
+                  })
+                }
+                className="w-full text-xl"
+              />
+            </Field>
+
+            <Field>
+              <InlineEditableTextarea
+                value={description}
+                onChange={(value) => setDescription(value)}
+                placeholder="Description (optional)"
+                onBlur={() =>
+                  handleSubmit({
+                    updates: {
+                      title,
+                      description,
+                      status,
+                      dueDate,
+                      priority,
+                      position,
+                    },
+                  })
+                }
+                className="w-full"
+              />
+            </Field>
+
+            <FieldGroup className="grid grid-cols-1 gap-2 md:grid-cols-3">
+              <Combobox
+                items={Object.values(TaskStatusEnumValues)}
+                value={status}
+                onValueChange={(value) => {
+                  const newStatus = value ?? "Todo"
+                  setStatus(newStatus)
+                  handleSubmit({
+                    updates: {
+                      title,
+                      description,
+                      status: newStatus,
+                      dueDate,
+                      priority,
+                      position,
+                    },
+                  })
+                }}
+              >
+                <ComboboxInput>
+                  <InputGroupAddon>
+                    <Kanban data-testid="status-icon" className="size-4" />
+                  </InputGroupAddon>
+                </ComboboxInput>
+                <ComboboxContent className="w-full" align="center">
+                  <ComboboxList>
+                    {(item) => (
+                      <ComboboxItem key={item} value={item}>
+                        {item}
+                      </ComboboxItem>
+                    )}
+                  </ComboboxList>
+                </ComboboxContent>
+              </Combobox>
+
+              <DatePickerWithClear
+                value={dueDate}
+                handleOnChange={(value) => {
+                  const newDueDate = value
+                  setDueDate(newDueDate)
+                  handleSubmit({
+                    updates: {
+                      title,
+                      description,
+                      status,
+                      dueDate: newDueDate,
+                      priority,
+                      position,
+                    },
+                  })
+                }}
+                leadingIcon={<GoalIcon data-testid="due-date-icon" />}
+                placeholder="Due date"
+              />
+
+              <Combobox
+                items={Object.values(TaskPriorityEnumValues)}
+                value={priority}
+                onValueChange={(value) => {
+                  const newPriority = value
+                  setPriority(newPriority)
+                  handleSubmit({
+                    updates: {
+                      title,
+                      description,
+                      status,
+                      dueDate,
+                      priority: newPriority,
+                      position,
+                    },
+                  })
+                }}
+              >
+                <ComboboxInput showClear placeholder="Priority">
+                  <InputGroupAddon>
+                    <Flag
+                      data-testid="priority-field-icon"
+                      className="size-4"
+                    />
+                  </InputGroupAddon>
+                </ComboboxInput>
+                <ComboboxContent>
+                  <ComboboxList>
+                    {(item) => (
+                      <ComboboxItem key={item} value={item}>
+                        {item}
+                      </ComboboxItem>
+                    )}
+                  </ComboboxList>
+                </ComboboxContent>
+              </Combobox>
+            </FieldGroup>
+          </div>
+
+          <div className="space-y-6 lg:min-w-0 lg:border-l lg:pl-4">
+            <TagsSection task={task} />
+            <ChecklistSection task={task} />
+            <CommentsSection task={task} />
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+const TagsSection = ({ task }: { task: TaskType }) => {
+  const [isCollapsed, setIsCollapsed] = useState(false)
+
+  // gather tags
+  const trpc = useTRPC()
+  const { data: tags } = useQuery(trpc.tags.readAll.queryOptions())
+
+  // const router = useRouter()
+  const queryClient = useQueryClient()
+  const addTag = useMutation(
+    trpc.tasks.addTagToTask.mutationOptions({
+      onSuccess: async () => {
+        await queryClient.invalidateQueries(trpc.tasks.pathFilter())
+      },
+      onError: (error) => {
+        console.error("Failed to add tag to task", error)
+        toast.error("Failed to add tag to task")
+      },
+    })
+  )
+  const removeTag = useMutation(
+    trpc.tasks.removeTagFromTask.mutationOptions({
+      onSuccess: async () => {
+        await queryClient.invalidateQueries(trpc.tasks.pathFilter())
+      },
+      onError: (error) => {
+        console.error("Failed to remove tag from task", error)
+        toast.error("Failed to remove tag from task")
+      },
+    })
+  )
+  const [selectedTags, setSelectedTags] = useState<string[]>([])
+
+  useEffect(() => {
+    setSelectedTags(task.taskTags.map((taskTag) => taskTag.tagId))
+  }, [task.id, task.taskTags])
+
+  const handleSelectedTagsChange = async (nextSelectedTags: string[]) => {
+    console.log("handleSelectedTagsChange", nextSelectedTags)
+    const previousSelectedTags = selectedTags
+    setSelectedTags(nextSelectedTags)
+
+    const addedTagIds = nextSelectedTags.filter(
+      (tagId) => !previousSelectedTags.includes(tagId)
+    )
+    const removedTagIds = previousSelectedTags.filter(
+      (tagId) => !nextSelectedTags.includes(tagId)
+    )
+
+    if (addedTagIds.length === 0 && removedTagIds.length === 0) {
+      return
+    }
+
+    for (const tagId of addedTagIds) {
+      await addTag.mutateAsync({
+        taskId: task.id,
+        tagId,
+      })
+    }
+
+    for (const tagId of removedTagIds) {
+      await removeTag.mutateAsync({
+        taskId: task.id,
+        tagId,
+      })
+    }
+  }
+
+  const lookupTagColor = (tagId: string, tags: TagType[]): string => {
+    const tag = tags.find((t) => t.id === tagId)
+    return tag?.color ? tag.color : "transparent"
+  }
+  return (
+    <div>
+      <h3 className="flex items-center gap-2 text-sm font-medium">
+        <TagIcon className="size-4" />
+        Tags
+        <div className="ml-auto flex items-center">
+          <Badge variant="secondary">{task.taskTags.length}</Badge>
+          <Button
+            onClick={() => setIsCollapsed(!isCollapsed)}
+
+            variant="ghost"
+          >
+            <ChevronDownIcon
+              className={`${isCollapsed ? "-rotate-90" : ""} transition`}
+            />
+          </Button>
+        </div>
+      </h3>
+
+      {!isCollapsed && (
+        <Combobox
+          multiple
+          autoHighlight
+          items={tags?.map((tag) => ({
+            value: tag.id,
+            label: tag.name,
+          }))}
+          value={selectedTags}
+          onValueChange={(value) => void handleSelectedTagsChange(value)}
+        >
+          <ComboboxChips>
+            <ComboboxValue>
+              <div className="flex grow flex-col gap-2">
+                <div className="flex flex-wrap gap-2">
+                  {selectedTags.map((tag) => (
+                    <div
+                      key={tag}
+                      className="flex h-5 w-fit items-center gap-2 rounded-2xl border pl-2 text-sm"
+                    >
+                      {tag ? (
+                        <span
+                          className="size-2 rounded-full"
+                          style={{
+                            backgroundColor: lookupTagColor(tag, tags ?? []),
+                          }}
+                        />
+                      ) : null}
+                      <span>{tags?.find((t) => t.id === tag)?.name || ""}</span>
+                      <Button
+                        variant={"ghost"}
+                        size={"icon-xs"}
+                        data-slot="combobox-chip-remove"
+                        onClick={() =>
+                          handleSelectedTagsChange(
+                            selectedTags.filter((t) => t !== tag)
+                          )
+                        }
+                      >
+                        <XIcon className="size-3" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+                <ComboboxChipsInput placeholder="Select tags..." />
+              </div>
+            </ComboboxValue>
+          </ComboboxChips>
+          <ComboboxContent align="center">
+            <ComboboxEmpty>No tags found.</ComboboxEmpty>
+            <ComboboxList>
+              {(item: ComboboxOption) => (
+                <ComboboxItem key={item.value} value={item.value}>
+                  {item.label}
+                </ComboboxItem>
+              )}
+            </ComboboxList>
+          </ComboboxContent>
+        </Combobox>
+      )}
+    </div>
+  )
+}
+
+const ChecklistSection = ({ task }: { task: TaskType }) => {
+  const [isCollapsed, setIsCollapsed] = useState(false)
+  const [newChecklistItem, setNewChecklistItem] = useState("")
+
+  const queryClient = useQueryClient()
+  const trpc = useTRPC()
+  const createChecklistItem = useMutation(
+    trpc.tasks.createChecklistItem.mutationOptions({
+      onSuccess: async () => {
+        await queryClient.invalidateQueries(trpc.tasks.pathFilter())
+        setNewChecklistItem("")
+      },
+    })
+  )
+  const handleAddChecklistItem = async () => {
+    if (!newChecklistItem.trim()) return
+
+    await createChecklistItem.mutateAsync({
+      content: newChecklistItem,
+      position: task.checklistItems.length,
+      taskId: task.id,
+    })
+  }
+
+  // DnD
+  const reorderChecklistItems = useMutation(
+    trpc.tasks.reorderChecklistItems.mutationOptions({
+      onSuccess: async () => {
+        await queryClient.invalidateQueries(trpc.tasks.pathFilter())
+      },
+    })
+  )
+  const [checklistRef, checklistItems, setChecklistItems] = useDragAndDrop<
+    HTMLUListElement,
+    ChecklistItemType
+  >([], {
+    dragHandle: ".drag-handle",
+    plugins: [animations()],
+    onDragend: async (event) => {
+      const dragEvent = event as { values: ChecklistItemType[] }
+      const updates = dragEvent.values.map((item, i) => ({
+        checklistItemId: item.id,
+        position: i,
+      }))
+      await reorderChecklistItems.mutateAsync({ updates })
+    },
+  })
+  useEffect(() => {
+    setChecklistItems(task.checklistItems)
+  }, [task.checklistItems, setChecklistItems])
+
+  return (
+    <div>
+      <h3 className="flex items-center gap-2 text-sm font-medium">
+        <CheckIcon className="size-4" />
+        Checklist
+        <div className="ml-auto flex items-center">
+          <Badge variant="secondary">
+            {checklistItems.filter((item) => item.complete).length}/
+            {checklistItems.length}
+          </Badge>
+          <Button
+            onClick={() => setIsCollapsed(!isCollapsed)}
+
+            variant="ghost"
+          >
+            <ChevronDownIcon
+              className={`${isCollapsed ? "-rotate-90" : ""} transition`}
+            />
+          </Button>
+        </div>
+      </h3>
+      {!isCollapsed && (
+        <>
+          <ul ref={checklistRef} className="isolate">
+            {checklistItems.map((item) => (
+              <ChecklistItem key={item.id} item={item} />
+            ))}
+          </ul>
+          <InputGroup>
+            <InputGroupInput
+              placeholder="New checklist item..."
+              value={newChecklistItem}
+              onChange={(e) => setNewChecklistItem(e.target.value)}
+              onKeyUp={async (e) => {
+                if (e.key === "Enter") await handleAddChecklistItem()
+              }}
+            />
+            <InputGroupAddon align="inline-end">
+              <InputGroupButton
+                onClick={handleAddChecklistItem}
+                disabled={createChecklistItem.isPending || !newChecklistItem}
+              >
+                Add
+              </InputGroupButton>
+            </InputGroupAddon>
+          </InputGroup>
+        </>
+      )}
+    </div>
+  )
+}
+
+const ChecklistItem = ({ item }: { item: ChecklistItemType }) => {
+  const [isChecked, setIsChecked] = useState(item.complete)
+
+  const queryClient = useQueryClient()
+  const trpc = useTRPC()
+  const updateChecklistItem = useMutation(
+    trpc.tasks.updateChecklistItem.mutationOptions({
+      onSuccess: async () => {
+        await queryClient.invalidateQueries(trpc.tasks.pathFilter())
+      },
+    })
+  )
+  const handleToggle = async () => {
+    setIsChecked(!isChecked)
+    await updateChecklistItem.mutateAsync({
+      id: item.id,
+      content: item.content,
+      position: item.position,
+      complete: !isChecked,
+    })
+  }
+
+  const deleteChecklistItem = useMutation(
+    trpc.tasks.deleteChecklistItem.mutationOptions({
+      onSuccess: async () => {
+        await queryClient.invalidateQueries(trpc.tasks.pathFilter())
+      },
+    })
+  )
+  const handleDelete = async () => {
+    await deleteChecklistItem.mutateAsync({
+      id: item.id,
+    })
+  }
+
+  return (
+    <li className="flex items-center gap-2 p-2">
+      <span className="drag-handle cursor-grab active:cursor-grabbing">
+        <GripVerticalIcon className="size-4" />
+      </span>
+      <Checkbox checked={isChecked} onCheckedChange={handleToggle} />
+      <span
+        className={`${isChecked ? "text-muted-foreground line-through" : ""}`}
+      >
+        {item.content}
+      </span>
+      <Button
+        variant="destructive"
+        size="icon-xs"
+        className="ml-auto"
+        onClick={handleDelete}
+      >
+        <TrashIcon />
+      </Button>
+    </li>
+  )
+}
+
+const CommentsSection = ({ task }: { task: TaskType }) => {
+  const [isCollapsed, setIsCollapsed] = useState(false)
+  const [newCommentContent, setNewCommentContent] = useState("")
+  const [isNewCommentContentValid, setIsNewCommentContentValid] =
+    useState(false)
+  useEffect(() => {
+    setIsNewCommentContentValid(newCommentContent.trim().length > 0)
+  }, [newCommentContent])
+  const [isDeleteCommentConfirmationOpen, setIsDeleteCommentConfirmationOpen] =
+    useState(false)
+  const [selectedComment, setSelectedComment] = useState<CommentType | null>(
+    null
+  )
+
+  // const router = useRouter()
+  // const createComment = useServerFn(createCommentFn)
+  const queryClient = useQueryClient()
+  const trpc = useTRPC()
+  const createComment = useMutation(
+    trpc.tasks.createComment.mutationOptions({
+      onSuccess: async () => {
+        await queryClient.invalidateQueries(trpc.tasks.pathFilter())
+        setNewCommentContent("")
+      },
+    })
+  )
+  const handleCreateComment = async () => {
+    if (!isNewCommentContentValid) return
+    await createComment.mutateAsync({
+      content: newCommentContent,
+      taskId: task.id,
+    })
+  }
+
+  const handleDeleteComment = (comment: CommentType) => {
+    setSelectedComment(comment)
+    setIsDeleteCommentConfirmationOpen(true)
+  }
+
+  return (
+    <div>
+      <h3 className="flex items-center gap-2 text-sm font-medium">
+        <AlignLeft className="size-4" />
+        Comments
+        <div className="ml-auto flex items-center">
+          <Badge variant="secondary">{task.comments.length}</Badge>
+          <Button
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            className="ml-auto"
+            variant="ghost"
+          >
+            <ChevronDownIcon
+              className={`${isCollapsed ? "-rotate-90" : ""} transition`}
+            />
+          </Button>
+        </div>
+      </h3>
+      {!isCollapsed && (
+        <>
+          <div>
+            {task.comments.map((comment) => (
+              <div key={comment.id} className="mb-2 flex items-start gap-2">
+                <div className="border-border/70 bg-card flex-1 rounded-lg border p-2">
+                  <p className="text-sm">{comment.content}</p>
+                  <div className="text-muted-foreground mt-1 flex items-center justify-between text-xs">
+                    {comment.createdAt.toLocaleDateString()}
+                    <Button
+                      variant="destructive"
+                      size="icon-xs"
+                      onClick={() => handleDeleteComment(comment)}
+                    >
+                      <TrashIcon />
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <Field>
+            <InputGroup>
+              <InputGroupTextarea
+                id="block-end-textarea"
+                placeholder="Write a comment..."
+                value={newCommentContent}
+                onChange={(e) => setNewCommentContent(e.target.value)}
+              />
+              <InputGroupAddon align="block-end">
+                {/* <InputGroupText>{newCommentContent.length}/280</InputGroupText> */}
+                <InputGroupButton
+                  variant="default"
+                  size="sm"
+                  className="ml-auto"
+                  disabled={!isNewCommentContentValid}
+                  onClick={handleCreateComment}
+                >
+                  Post
+                </InputGroupButton>
+              </InputGroupAddon>
+            </InputGroup>
+          </Field>
+        </>
+      )}
+
+      {selectedComment !== null && (
+        <DeleteCommentConfirmation
+          comment={selectedComment}
+          open={isDeleteCommentConfirmationOpen}
+          close={() => {
+            setIsDeleteCommentConfirmationOpen(false)
+            setSelectedComment(null)
+          }}
+        />
+      )}
+    </div>
+  )
+}

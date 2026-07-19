@@ -1,30 +1,73 @@
-import { differenceInCalendarDays, endOfYear } from "date-fns"
+import type { TaskType } from "@kando/api"
+import {
+  differenceInCalendarDays,
+  isToday,
+  isValid,
+  parse,
+  startOfDay,
+} from "date-fns"
 
-/**
- * Calculates progress metrics based on setDate and dueDate
- * @param setDate - The date when the task was set
- * @param dueDate - The date when the task is due (optional)
- * @returns An object containing interval, elapsedDays, daysRemaining, progress percentage, and overdue status
- *
- * If dueDate is not provided, set dueDate to the end of the current year and calculate accordingly.
- */
-export const calculateTaskProgress = (setDate: Date, dueDate?: Date) => {
-  const currentDate = new Date()
-  const elapsedDays = differenceInCalendarDays(currentDate, setDate)
+interface TaskDateFilterInput {
+  status: TaskType["status"]
+  dueDate: TaskType["dueDate"] | Date
+}
 
-  dueDate ??= endOfYear(currentDate)
-
-  // include both start and end dates in interval and daysRemaining calculations
-  const interval = differenceInCalendarDays(dueDate, setDate) + 1
-  const daysRemaining = differenceInCalendarDays(dueDate, currentDate) + 1
-  const progress = Math.round((elapsedDays / interval) * 100)
-  const overdue = currentDate > dueDate
-
-  return {
-    interval,
-    elapsedDays,
-    daysRemaining,
-    progress: progress > 0 ? progress : 0,
-    overdue,
+export function parseDueDate(value: unknown): Date | null {
+  if (!value) {
+    return null
   }
+
+  if (value instanceof Date) {
+    return Number.isNaN(value.getTime()) ? null : value
+  }
+
+  const stringValue = String(value)
+
+  // Parse date-only values explicitly as local dates to avoid UTC shifts.
+  if (/^\d{4}-\d{2}-\d{2}$/.test(stringValue)) {
+    const parsedDateOnly = parse(stringValue, "yyyy-MM-dd", new Date())
+    return isValid(parsedDateOnly) ? parsedDateOnly : null
+  }
+
+  const parsed = new Date(stringValue)
+  return Number.isNaN(parsed.getTime()) ? null : parsed
+}
+
+export function isOverdue(task: TaskDateFilterInput, now: Date): boolean {
+  if (task.status === "Done") {
+    return false
+  }
+
+  const dueDate = parseDueDate(task.dueDate)
+  if (!dueDate) {
+    return false
+  }
+
+  if (isToday(dueDate)) {
+    return false
+  }
+
+  return dueDate < startOfDay(now)
+}
+
+export function isDoneRecently(
+  task: TaskDateFilterInput,
+  now: Date,
+  recentDays = 7
+): boolean {
+  if (task.status !== "Done") {
+    return false
+  }
+
+  const dueDate = parseDueDate(task.dueDate)
+  if (!dueDate) {
+    return false
+  }
+
+  const daysSinceDue = differenceInCalendarDays(
+    startOfDay(now),
+    startOfDay(dueDate)
+  )
+
+  return daysSinceDue >= 0 && daysSinceDue <= recentDays
 }

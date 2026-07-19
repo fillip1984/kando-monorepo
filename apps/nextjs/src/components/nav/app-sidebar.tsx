@@ -49,16 +49,16 @@ import {
 const data = {
   navMain: [
     {
-      title: "Collections",
-      url: "/collections",
+      title: "Dashboard",
+      url: "/",
+    },
+    {
+      title: "Board",
+      url: "/boards",
     },
     {
       title: "Tags",
       url: "/tags",
-    },
-    {
-      title: "Results",
-      url: "/results",
     },
   ],
 }
