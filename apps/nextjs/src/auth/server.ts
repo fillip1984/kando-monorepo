@@ -6,7 +6,7 @@ import { cache } from "react"
 
 import { initAuth } from "@kando/auth"
 
-import { env } from "~/env"
+import { env } from "@/env"
 
 export const auth = initAuth({
   baseUrl: env.PRODUCTION_URL,

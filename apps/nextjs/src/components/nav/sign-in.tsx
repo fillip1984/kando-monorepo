@@ -2,14 +2,14 @@
 
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
-import { authClient } from "@/server/better-auth/client"
+
 import { useState } from "react"
 
-import googleIcon from "@/../public/icons/google-icon.svg"
+import { authClient } from "@/auth/client"
 import Image from "next/image"
 
 export default function SignInView() {
-  const socialProviders = [{ label: "google", icon: googleIcon }]
+  const socialProviders = [{ label: "google", icon: "/google-icon.svg" }]
 
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
@@ -18,7 +18,7 @@ export default function SignInView() {
     <div className="flex h-screen w-screen flex-col items-center pt-40">
       <div className="flex w-2/3 flex-col items-center justify-center gap-2">
         <h3 className="text-center text-2xl font-bold">Welcome to Todo</h3>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           This web application is by invitation only...
         </p>
         <div className="mt-8">

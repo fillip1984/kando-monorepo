@@ -2,15 +2,13 @@ import { createEnv } from "@t3-oss/env-nextjs"
 import { z } from "zod/v4"
 
 import { authEnv } from "@kando/auth/env"
-import { dbEnv } from "../../../packages/db/env"
 
 export const env = createEnv({
-  extends: [authEnv(), dbEnv()],
+  extends: [authEnv()],
   shared: {
     NODE_ENV: z
       .enum(["development", "production", "test"])
       .default("development"),
-    PRODUCTION_URL: z.url(),
   },
   /**
    * Specify your server-side environment variables schema here.
@@ -20,7 +18,7 @@ export const env = createEnv({
     // now comes from dbEnv
     // POSTGRES_URL: z.url(),
     // POSTGRES_SCHEMA: z.string(),
-    // PRODUCTION_URL: z.url(),
+    PRODUCTION_URL: z.url(),
   },
 
   /**
@@ -35,8 +33,6 @@ export const env = createEnv({
    */
   experimental__runtimeEnv: {
     NODE_ENV: process.env.NODE_ENV,
-    PRODUCTION_URL: process.env.PRODUCTION_URL,
-
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },
   skipValidation:

@@ -9,7 +9,7 @@ import SuperJSON from "superjson"
 
 import type { AppRouter } from "@kando/api"
 
-import { env } from "~/env"
+import { env } from "@/env"
 import { createQueryClient } from "./query-client"
 
 let clientQueryClientSingleton: QueryClient | undefined = undefined
@@ -60,6 +60,5 @@ export function TRPCReactProvider(props: { children: React.ReactNode }) {
 
 const getBaseUrl = () => {
   if (typeof window !== "undefined") return window.location.origin
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return env.PRODUCTION_URL
 }

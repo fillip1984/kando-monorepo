@@ -1,7 +1,6 @@
 "use client"
 
 import { useTRPC } from "@/trpc/react"
-import { useQuery } from "@tanstack/react-query"
 import { useParams, usePathname } from "next/navigation"
 import { Fragment, useEffect, useState } from "react"
 import {
@@ -22,16 +21,16 @@ export default function AppTopbar() {
     { label: string; href: string }[]
   >([])
   const trpc = useTRPC()
-  const { data: collection, isLoading } = useQuery(
-    trpc.collection.readById.queryOptions(
-      {
-        id: id as string,
-      },
-      {
-        enabled: !!id && path.startsWith("/collections"),
-      }
-    )
-  )
+  // const { data: collection, isLoading } = useQuery(
+  //   trpc.collection.readById.queryOptions(
+  //     {
+  //       id: id as string,
+  //     },
+  //     {
+  //       enabled: !!id && path.startsWith("/collections"),
+  //     }
+  //   )
+  // )
   useEffect(() => {
     const segments = path.split("/").filter(Boolean)
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -68,7 +67,7 @@ export default function AppTopbar() {
             ) : (
               <BreadcrumbItem key={breadcrumb.href}>
                 <BreadcrumbPage>
-                  {isLoading ? "Loading..." : (collection?.name ?? "Not Found")}
+                  {/* {isLoading ? "Loading..." : (collection?.name ?? "Not Found")} */}
                 </BreadcrumbPage>
               </BreadcrumbItem>
             )

@@ -1,6 +1,6 @@
 "use client"
 
-import * as React from "react"
+import type * as React from "react"
 
 import {
   Sidebar,
@@ -14,7 +14,8 @@ import {
   SidebarRail,
   useSidebar,
 } from "@/components/ui/sidebar"
-import { authClient } from "@/server/better-auth/client"
+
+import { authClient } from "@/auth/client"
 import {
   ChevronsUpDown,
   ComputerIcon,
@@ -78,7 +79,7 @@ const Branding = () => {
       <SidebarMenu>
         <SidebarMenuItem>
           <SidebarMenuButton size="lg" render={<Link href="/" />}>
-            <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+            <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
               <KanbanIcon className="size-4" />
             </div>
             <div className="gap-0.5 leading-none">
