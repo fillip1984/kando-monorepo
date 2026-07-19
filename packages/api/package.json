@@ -28,8 +28,8 @@
     "@kando/eslint-config": "workspace:*",
     "@kando/prettier-config": "workspace:*",
     "@kando/tsconfig": "workspace:*",
-    "eslint": "^9.39.4",
-    "prettier": "^3.9.4",
+    "eslint": "^9.39.5",
+    "prettier": "^3.9.5",
     "typescript": "^5.9.3"
   },
   "prettier": "@kando/prettier-config"

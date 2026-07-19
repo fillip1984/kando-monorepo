@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "@paralleldrive/cuid2": "^3.3.0",
-    "drizzle-orm": "1.0.0-rc.4",  
+    "drizzle-orm": "1.0.0-rc.4",
     "postgres": "^3.4.9",
     "zod": "^4.4.3"
   },
@@ -39,8 +39,8 @@
     "@kando/prettier-config": "workspace:*",
     "@kando/tsconfig": "workspace:*",
     "drizzle-kit": "1.0.0-rc.4",
-    "eslint": "^9.39.4",
-    "prettier": "^3.9.4",
+    "eslint": "^9.39.5",
+    "prettier": "^3.9.5",
     "typescript": "^5.9.3"
   },
   "prettier": "@kando/prettier-config"

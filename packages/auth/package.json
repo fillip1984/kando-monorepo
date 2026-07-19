@@ -17,19 +17,19 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@kando/db": "workspace:*",
     "@better-auth/expo": "1.6.23",
-    "@t3-oss/env-core": "^0.13.8",
+    "@kando/db": "workspace:*",
+    "@t3-oss/env-core": "^0.13.11",
     "better-auth": "1.6.23",
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@better-auth/cli": "1.4.21",
     "@kando/eslint-config": "workspace:*",
     "@kando/prettier-config": "workspace:*",
     "@kando/tsconfig": "workspace:*",
-    "@better-auth/cli": "1.4.21",
-    "eslint": "^9.39.4",
-    "prettier": "^3.9.4",
+    "eslint": "^9.39.5",
+    "prettier": "^3.9.5",
     "typescript": "^5.9.3"
   },
   "prettier": "@kando/prettier-config"

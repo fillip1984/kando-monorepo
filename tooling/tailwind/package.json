@@ -22,7 +22,7 @@
     "@kando/eslint-config": "workspace:*",
     "@kando/prettier-config": "workspace:*",
     "@kando/tsconfig": "workspace:*",
-    "@types/node": "^26.1.0",
+    "@types/node": "26.1.1",
     "eslint": "^9.39.5",
     "prettier": "^3.9.5",
     "typescript": "^5.9.3"
