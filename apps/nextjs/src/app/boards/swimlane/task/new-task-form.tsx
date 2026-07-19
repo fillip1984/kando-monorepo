@@ -22,11 +22,10 @@ import { Input } from "@/components/ui/input"
 import { InputGroupAddon } from "@/components/ui/input-group"
 import { Spinner } from "@/components/ui/spinner"
 import { Textarea } from "@/components/ui/textarea"
-import type { TodoPriorityEnum, TodoStatusEnum } from "@/lib/enum-values"
-import { TodoPriorityEnumValues, TodoStatusEnumValues } from "@/lib/enum-values"
-import { createTaskFn } from "@/server/functions/todos"
-import { useRouter } from "@tanstack/react-router"
-import { useServerFn } from "@tanstack/react-start"
+import { useTRPC } from "@/trpc/react"
+import type { TaskPriorityEnumType, TaskStatusEnumType } from "@kando/db/enums"
+import { TaskPriorityEnumValues, TaskStatusEnumValues } from "@kando/db/enums"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { Flag, GoalIcon, Kanban } from "lucide-react"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
@@ -40,30 +39,36 @@ export default function NewTaskForm({
 }) {
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
-  const [status, setStatus] = useState<TodoStatusEnum>("Todo")
+  const [status, setStatus] = useState<TaskStatusEnumType>("Todo")
   const [dueDate, setDueDate] = useState("")
-  const [priority, setPriority] = useState<TodoPriorityEnum | null>(null)
+  const [priority, setPriority] = useState<TaskPriorityEnumType | null>(null)
 
-  const router = useRouter()
-  const createTask = useServerFn(createTaskFn)
-  const [isPending, setIsPending] = useState(false)
-  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    setIsPending(true)
-    await createTask({
-      data: {
-        title,
-        description,
-        status,
-        dueDate,
-        priority,
-        position: 9999,
+  const queryClient = useQueryClient()
+  const trpc = useTRPC()
+  const createTask = useMutation(
+    trpc.tasks.create.mutationOptions({
+      onSuccess: async () => {
+        await queryClient.invalidateQueries(trpc.tasks.pathFilter())
+        toast.success("Task created")
+        close()
+      },
+      onError: (error) => {
+        toast.error(`Failed to create task: ${error.message}`)
       },
     })
-    setIsPending(false)
-    router.invalidate()
-    toast.success("Task created")
-    close()
+  )
+
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
+    e.preventDefault()
+
+    await createTask.mutateAsync({
+      title,
+      description,
+      status,
+      dueDate,
+      priority,
+      position: 9999,
+    })
   }
 
   const [isValid, setIsValid] = useState(false)
@@ -80,7 +85,7 @@ export default function NewTaskForm({
         <form
           id="new-task-form"
           onSubmit={handleSubmit}
-          className="-mx-4 no-scrollbar grid max-h-[75vh] gap-4 overflow-y-auto px-4 lg:grid-cols-2"
+          className="no-scrollbar -mx-4 grid max-h-[75vh] gap-4 overflow-y-auto px-4 lg:grid-cols-2"
         >
           <div className="space-y-3 lg:min-w-0">
             <Field>
@@ -103,7 +108,7 @@ export default function NewTaskForm({
 
             <FieldGroup className="grid grid-cols-1 gap-2 md:grid-cols-3">
               <Combobox
-                items={Object.values(TodoStatusEnumValues)}
+                items={Object.values(TaskStatusEnumValues)}
                 value={status}
                 onValueChange={(value) => {
                   setStatus(value ?? "Todo")
@@ -136,7 +141,7 @@ export default function NewTaskForm({
               />
 
               <Combobox
-                items={Object.values(TodoPriorityEnumValues)}
+                items={Object.values(TaskPriorityEnumValues)}
                 value={priority}
                 onValueChange={(value) => {
                   const newPriority = value
@@ -169,9 +174,9 @@ export default function NewTaskForm({
           <Button
             form="new-task-form"
             type="submit"
-            disabled={!isValid || isPending}
+            disabled={!isValid || createTask.isPending}
           >
-            {isPending ? <Spinner /> : "Create Task"}
+            {createTask.isPending ? <Spinner /> : "Create Task"}
           </Button>
         </DialogFooter>
       </DialogContent>
