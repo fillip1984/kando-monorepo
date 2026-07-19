@@ -1,24 +1,26 @@
-import { createEnv } from "@t3-oss/env-nextjs";
-import { vercel } from "@t3-oss/env-nextjs/presets-zod";
-import { z } from "zod/v4";
+import { createEnv } from "@t3-oss/env-nextjs"
+import { z } from "zod/v4"
 
-import { authEnv } from "@kando/auth/env";
+import { authEnv } from "@kando/auth/env"
+import { dbEnv } from "../../../packages/db/env"
 
 export const env = createEnv({
-  extends: [authEnv(), vercel()],
+  extends: [authEnv(), dbEnv()],
   shared: {
     NODE_ENV: z
       .enum(["development", "production", "test"])
       .default("development"),
+    PRODUCTION_URL: z.url(),
   },
   /**
    * Specify your server-side environment variables schema here.
    * This way you can ensure the app isn't built with invalid env vars.
    */
   server: {
-    POSTGRES_URL: z.url(),
-    POSTGRES_SCHEMA: z.string(),
-    PRODUCTION_URL: z.url(),
+    // now comes from dbEnv
+    // POSTGRES_URL: z.url(),
+    // POSTGRES_SCHEMA: z.string(),
+    // PRODUCTION_URL: z.url(),
   },
 
   /**
@@ -33,9 +35,10 @@ export const env = createEnv({
    */
   experimental__runtimeEnv: {
     NODE_ENV: process.env.NODE_ENV,
+    PRODUCTION_URL: process.env.PRODUCTION_URL,
 
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },
   skipValidation:
     !!process.env.CI || process.env.npm_lifecycle_event === "lint",
-});
+})

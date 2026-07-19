@@ -47,6 +47,7 @@
     "@kando/eslint-config": "workspace:*",
     "@kando/prettier-config": "workspace:*",
     "@kando/tsconfig": "workspace:*",
+    "@types/node": "26.1.1",
     "drizzle-kit": "1.0.0-rc.4",
     "eslint": "^9.39.5",
     "prettier": "^3.9.5",

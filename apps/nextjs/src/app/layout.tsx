@@ -1,70 +1,78 @@
-import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Noto_Sans } from "next/font/google"
 
-import { cn } from "@kando/ui";
-import { ThemeProvider, ThemeToggle } from "@kando/ui/theme";
-import { Toaster } from "@kando/ui/toast";
+import { getSession } from "@/auth/server"
+import { AppSidebar } from "@/components/nav/app-sidebar"
+import AppTopbar from "@/components/nav/app-topbar"
+import SignInView from "@/components/nav/sign-in"
+import { ThemeProvider } from "@/components/theme/theme-provider"
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
+import { cn } from "@/lib/utils"
+import { TRPCReactProvider } from "@/trpc/react"
+import type { Metadata } from "next"
+import "./globals.css"
 
-import { env } from "~/env";
-import { TRPCReactProvider } from "~/trpc/react";
+const notoSansHeading = Noto_Sans({
+  subsets: ["latin"],
+  variable: "--font-heading",
+})
 
-import "~/app/styles.css";
+const geist = Geist({ subsets: ["latin"], variable: "--font-sans" })
+
+const fontMono = Geist_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono",
+})
 
 export const metadata: Metadata = {
-  metadataBase: new URL(
-    env.VERCEL_ENV === "production"
-      ? "https://turbo.t3.gg"
-      : "http://localhost:3000",
-  ),
-  title: "Create T3 Turbo",
-  description: "Simple monorepo with shared backend for web & mobile apps",
-  openGraph: {
-    title: "Create T3 Turbo",
-    description: "Simple monorepo with shared backend for web & mobile apps",
-    url: "https://create-t3-turbo.vercel.app",
-    siteName: "Create T3 Turbo",
-  },
-  twitter: {
-    card: "summary_large_image",
-    site: "@jullerino",
-    creator: "@jullerino",
-  },
-};
+  title: "Stamina",
+  description:
+    "Productivity app to help you build good habits and get things done",
+}
 
-export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "white" },
-    { media: "(prefers-color-scheme: dark)", color: "black" },
-  ],
-};
+export default async function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode
+}>) {
+  const session = await getSession()
 
-const geistSans = Geist({
-  subsets: ["latin"],
-  variable: "--font-geist-sans",
-});
-const geistMono = Geist_Mono({
-  subsets: ["latin"],
-  variable: "--font-geist-mono",
-});
-
-export default function RootLayout(props: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body
-        className={cn(
-          "bg-background text-foreground min-h-screen font-sans antialiased",
-          geistSans.variable,
-          geistMono.variable,
-        )}
-      >
-        <ThemeProvider>
-          <TRPCReactProvider>{props.children}</TRPCReactProvider>
-          <div className="absolute right-4 bottom-4">
-            <ThemeToggle />
-          </div>
-          <Toaster />
-        </ThemeProvider>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={cn(
+        "antialiased",
+        fontMono.variable,
+        "font-sans",
+        geist.variable,
+        notoSansHeading.variable
+      )}
+    >
+      <body>
+        <TRPCReactProvider>
+          <ThemeProvider>
+            {session?.user ? <SignedIn>{children}</SignedIn> : <SignInView />}
+          </ThemeProvider>
+        </TRPCReactProvider>
       </body>
     </html>
-  );
+  )
+}
+
+const SignedIn = ({ children }: Readonly<{ children: React.ReactNode }>) => {
+  return (
+    <SidebarProvider
+      style={
+        {
+          "--sidebar-width": "19rem",
+        } as React.CSSProperties
+      }
+    >
+      <AppSidebar />
+      <SidebarInset className="h-screen overflow-hidden">
+        <AppTopbar />
+        <div className="flex grow overflow-hidden">{children}</div>
+      </SidebarInset>
+    </SidebarProvider>
+  )
 }
