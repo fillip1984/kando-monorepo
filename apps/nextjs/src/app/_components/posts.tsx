@@ -7,19 +7,19 @@ import {
   useSuspenseQuery,
 } from "@tanstack/react-query";
 
-import type { RouterOutputs } from "@acme/api";
-import { CreatePostSchema } from "@acme/db/schema";
-import { cn } from "@acme/ui";
-import { Button } from "@acme/ui/button";
+import type { RouterOutputs } from "@kando/api";
+import { CreatePostSchema } from "@kando/db/schema";
+import { cn } from "@kando/ui";
+import { Button } from "@kando/ui/button";
 import {
   Field,
   FieldContent,
   FieldError,
   FieldGroup,
   FieldLabel,
-} from "@acme/ui/field";
-import { Input } from "@acme/ui/input";
-import { toast } from "@acme/ui/toast";
+} from "@kando/ui/field";
+import { Input } from "@kando/ui/input";
+import { toast } from "@kando/ui/toast";
 
 import { useTRPC } from "~/trpc/react";
 
