@@ -17,18 +17,20 @@
   "files.associations": {
     "*.css": "tailwindcss"
   },
-  "files.readonlyInclude": {
-    "**/routeTree.gen.ts": true
-  },
-  "files.watcherExclude": {
-    "**/routeTree.gen.ts": true
-  },
-  "prettier.ignorePath": ".gitignore",
-  "tailwindCSS.classFunctions": ["cva", "cx", "cn"],
-  "typescript.enablePromptUseWorkspaceTsdk": true,
-  "typescript.preferences.autoImportFileExcludePatterns": [
+  "js/ts.preferences.autoImportFileExcludePatterns": [
+    "@base-ui/*",
     "next/router.d.ts",
-    "next/dist/client/router.d.ts"
+    "next/dist/client/router.d.ts",
+    "**/@radix-ui/*"
   ],
-  "typescript.tsdk": "node_modules/typescript/lib"
+  "js/ts.preferences.autoImportSpecifierExcludeRegexes": [
+    "^@base-ui",
+    "next/router.d.ts",
+    "next/dist/client/router.d.ts",
+    "**/@radix-ui/*"
+  ],
+  "js/ts.tsdk.promptToUseWorkspaceVersion": true,
+  "js/ts.tsdk.path": "node_modules/typescript/lib",
+  "prettier.ignorePath": ".gitignore",
+  "tailwindCSS.classFunctions": ["cva", "cx", "cn"]
 }
