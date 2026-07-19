@@ -18,19 +18,19 @@
   },
   "dependencies": {
     "@kando/db": "workspace:*",
-    "@better-auth/expo": "catalog:",
+    "@better-auth/expo": "1.6.23",
     "@t3-oss/env-core": "^0.13.8",
-    "better-auth": "catalog:",
-    "zod": "catalog:"
+    "better-auth": "1.6.23",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@kando/eslint-config": "workspace:*",
     "@kando/prettier-config": "workspace:*",
     "@kando/tsconfig": "workspace:*",
-    "@better-auth/cli": "catalog:",
-    "eslint": "catalog:",
-    "prettier": "catalog:",
-    "typescript": "catalog:"
+    "@better-auth/cli": "1.4.21",
+    "eslint": "^9.39.4",
+    "prettier": "^3.9.4",
+    "typescript": "^5.9.3"
   },
   "prettier": "@kando/prettier-config"
 }

@@ -14,13 +14,13 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@better-auth/expo": "catalog:",
+    "@better-auth/expo": "1.6.23",
     "@legendapp/list": "^2.0.14",
-    "@tanstack/react-query": "catalog:",
-    "@trpc/client": "catalog:",
-    "@trpc/server": "catalog:",
-    "@trpc/tanstack-react-query": "catalog:",
-    "better-auth": "catalog:",
+    "@tanstack/react-query": "^5.101.2",
+    "@trpc/client": "^11.18.0",
+    "@trpc/server": "^11.18.0",
+    "@trpc/tanstack-react-query": "^11.18.0",
+    "better-auth": "1.6.23",
     "expo": "~54.0.20",
     "expo-constants": "~18.0.10",
     "expo-dev-client": "~6.0.16",
@@ -32,8 +32,8 @@
     "expo-system-ui": "~6.0.8",
     "expo-web-browser": "~15.0.8",
     "nativewind": "5.0.0-preview.2",
-    "react": "catalog:react19",
-    "react-dom": "catalog:react19",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
     "react-native": "~0.81.5",
     "react-native-css": "3.0.1",
     "react-native-gesture-handler": "~2.28.0",
@@ -49,11 +49,11 @@
     "@kando/prettier-config": "workspace:*",
     "@kando/tailwind-config": "workspace:*",
     "@kando/tsconfig": "workspace:*",
-    "@types/react": "catalog:react19",
-    "eslint": "catalog:",
-    "prettier": "catalog:",
-    "tailwindcss": "catalog:",
-    "typescript": "catalog:"
+    "@types/react": "19.2.17",
+    "eslint": "^9.39.4",
+    "prettier": "^3.9.4",
+    "tailwindcss": "^4.3.2",
+    "typescript": "^5.9.3"
   },
   "prettier": "@kando/prettier-config"
 }

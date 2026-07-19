@@ -20,18 +20,17 @@
   "dependencies": {
     "@kando/auth": "workspace:*",
     "@kando/db": "workspace:*",
-    "@kando/validators": "workspace:*",
-    "@trpc/server": "catalog:",
+    "@trpc/server": "^11.18.0",
     "superjson": "2.2.3",
-    "zod": "catalog:"
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@kando/eslint-config": "workspace:*",
     "@kando/prettier-config": "workspace:*",
     "@kando/tsconfig": "workspace:*",
-    "eslint": "catalog:",
-    "prettier": "catalog:",
-    "typescript": "catalog:"
+    "eslint": "^9.39.4",
+    "prettier": "^3.9.4",
+    "typescript": "^5.9.3"
   },
   "prettier": "@kando/prettier-config"
 }

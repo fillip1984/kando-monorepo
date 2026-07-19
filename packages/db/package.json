@@ -29,19 +29,19 @@
     "with-env": "dotenv -e ../../.env --"
   },
   "dependencies": {
-    "@vercel/postgres": "^0.10.0",
-    "drizzle-orm": "^0.44.7",
-    "drizzle-zod": "^0.8.3",
-    "zod": "catalog:"
+    "@paralleldrive/cuid2": "^3.3.0",
+    "drizzle-orm": "1.0.0-rc.4",  
+    "postgres": "^3.4.9",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@kando/eslint-config": "workspace:*",
     "@kando/prettier-config": "workspace:*",
     "@kando/tsconfig": "workspace:*",
-    "drizzle-kit": "^0.31.5",
-    "eslint": "catalog:",
-    "prettier": "catalog:",
-    "typescript": "catalog:"
+    "drizzle-kit": "1.0.0-rc.4",
+    "eslint": "^9.39.4",
+    "prettier": "^3.9.4",
+    "typescript": "^5.9.3"
   },
   "prettier": "@kando/prettier-config"
 }
