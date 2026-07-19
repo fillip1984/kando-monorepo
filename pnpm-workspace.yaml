@@ -15,5 +15,5 @@ overrides:
   vite: 7.1.12
 
 publicHoistPattern:
-  - "@ianvs/prettier-plugin-sort-imports"
+  - prettier-plugin-organize-imports
   - prettier-plugin-tailwindcss

@@ -1,5 +1,5 @@
 {
   "extends": "@kando/tsconfig/compiled-package.json",
-  "include": ["src"],
+  "include": ["src", "*.ts"],
   "exclude": ["node_modules"]
 }

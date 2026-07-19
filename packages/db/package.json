@@ -7,6 +7,10 @@
       "types": "./dist/index.d.ts",
       "default": "./src/index.ts"
     },
+    "./env": {
+      "types": "./dist/env.d.ts",
+      "default": "./src/env.ts"
+    },
     "./client": {
       "types": "./dist/client.d.ts",
       "default": "./src/client.ts"
@@ -30,6 +34,7 @@
   },
   "dependencies": {
     "@paralleldrive/cuid2": "^3.3.0",
+    "@t3-oss/env-core": "^0.13.11",
     "drizzle-orm": "1.0.0-rc.4",
     "postgres": "^3.4.9",
     "zod": "^4.4.3"
