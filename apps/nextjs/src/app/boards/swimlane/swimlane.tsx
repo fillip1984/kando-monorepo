@@ -30,18 +30,18 @@ export function Swimlane({
             {tasks.length}
           </span>
         </header>
-        <div className="flex grow flex-col overflow-y-auto">
-          <div
-            ref={ref}
-            data-column-id={lane}
-            className="flex min-h-4 flex-col gap-1 px-4"
-          >
-            {tasks.map((task) => (
-              <TaskCard key={task.id} task={task} />
-            ))}
-          </div>
+
+        <div
+          ref={ref}
+          data-column-id={lane}
+          className="flex min-h-4 flex-col gap-1 overflow-y-auto px-4"
+        >
+          {tasks.map((task) => (
+            <TaskCard key={task.id} task={task} />
+          ))}
           <NewInlineTask lane={lane} tasks={tasks} />
         </div>
+
         {/* <NewTaskFromOutlookOverlay tasks={tasks} lane={lane} /> */}
       </div>
     </>
@@ -124,7 +124,7 @@ const NewInlineTask = ({
   }
 
   return (
-    <div className="m-4" ref={newInlineTaskDivRef}>
+    <div className="no-drag m-4" ref={newInlineTaskDivRef}>
       {!isEditMode ? (
         <Button
           variant="ghost"
