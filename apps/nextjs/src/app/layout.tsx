@@ -24,9 +24,9 @@ const fontMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: "Stamina",
+  title: "Kando | Kanban Todo Board",
   description:
-    "Productivity app to help you build good habits and get things done",
+    "Kando is a focused single-board Kanban todo app for tracking work from todo to done.",
 }
 
 export default async function RootLayout({
