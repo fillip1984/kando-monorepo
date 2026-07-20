@@ -17,6 +17,7 @@ import {
 
 import { authClient } from "@/auth/client"
 import {
+  ChartColumnBigIcon,
   ChevronsUpDown,
   ComputerIcon,
   KanbanIcon,
@@ -25,10 +26,11 @@ import {
   SlidersHorizontalIcon,
   SunIcon,
   SunMoonIcon,
+  TagIcon,
 } from "lucide-react"
 import { useTheme } from "next-themes"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
 import {
   DropdownMenu,
@@ -50,14 +52,17 @@ const data = {
   navMain: [
     {
       title: "Dashboard",
+      icon: <ChartColumnBigIcon />,
       url: "/",
     },
     {
       title: "Board",
+      icon: <KanbanIcon />,
       url: "/boards",
     },
     {
       title: "Tags",
+      icon: <TagIcon />,
       url: "/tags",
     },
   ],
@@ -93,6 +98,8 @@ const Branding = () => {
 }
 
 const PrimaryNav = () => {
+  const path = usePathname()
+
   return (
     <SidebarContent>
       <SidebarGroup>
@@ -100,10 +107,16 @@ const PrimaryNav = () => {
           {data.navMain.map((item) => (
             <SidebarMenuItem key={item.title}>
               <SidebarMenuButton
-                render={<a href={item.url} className="font-medium" />}
-              >
-                {item.title}
-              </SidebarMenuButton>
+                render={
+                  <Link
+                    href={item.url}
+                    className={`text-lg font-medium ${path === item.url ? "bg-sidebar-primary hover:bg-sidebar-primary" : ""}`}
+                  >
+                    {item.icon}
+                    {item.title}
+                  </Link>
+                }
+              ></SidebarMenuButton>
             </SidebarMenuItem>
           ))}
         </SidebarMenu>
