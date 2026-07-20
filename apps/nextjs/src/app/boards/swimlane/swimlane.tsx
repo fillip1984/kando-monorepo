@@ -4,12 +4,15 @@ import { Button } from "@/components/ui/button"
 import { Field } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
+import { parseOutlookMsg } from "@/lib/email-utils"
 import { useTRPC } from "@/trpc/react"
 import type { TaskType } from "@kando/api"
 import type { TaskStatusEnumType } from "@kando/db/enums"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { PlusIcon } from "lucide-react"
+import { CloudUploadIcon, PlusIcon } from "lucide-react"
+import type { DragEvent } from "react"
 import { useEffect, useRef, useState } from "react"
+import { toast } from "sonner"
 import { TaskCard } from "./task/task-card"
 
 export function Swimlane({
@@ -42,7 +45,7 @@ export function Swimlane({
           <NewInlineTask lane={lane} tasks={tasks} />
         </div>
 
-        {/* <NewTaskFromOutlookOverlay tasks={tasks} lane={lane} /> */}
+        <NewTaskFromOutlookOverlay tasks={tasks} lane={lane} />
       </div>
     </>
   )
@@ -163,125 +166,135 @@ const NewInlineTask = ({
   )
 }
 
-// const NewTaskFromOutlookOverlay = ({
-//   tasks,
-//   lane,
-// }: {
-//   tasks: TaskType[]
-//   lane: string
-// }) => {
-//   const [isDragStart, setIsDragStart] = useState(false)
-//   const [isDragReady, setIsDragReady] = useState(false)
-//   const dragDepthRef = useRef(0)
+const NewTaskFromOutlookOverlay = ({
+  tasks,
+  lane,
+}: {
+  tasks: TaskType[]
+  lane: string
+}) => {
+  const [isDragStart, setIsDragStart] = useState(false)
+  const [isDragReady, setIsDragReady] = useState(false)
+  const dragDepthRef = useRef(0)
 
-//   const router = useRouter()
-//   const uploadMsgFn = useServerFn(parseOutlookMsg)
-//   const createTask = useServerFn(createTaskFn)
-//   const nextPosition =
-//     tasks.reduce(
-//       (maxPosition, task) => Math.max(maxPosition, task.position ?? -1),
-//       -1
-//     ) + 1
+  const trpc = useTRPC()
+  const queryClient = useQueryClient()
+  const uploadMsgFn = useMutation(
+    trpc.email.parseOutlookMsg.mutationOptions({
+      onSuccess: async () => {
+        toast.success("Outlook message parsed successfully!")
+      },
+    })
+  )
+  const createTask = useMutation(
+    trpc.tasks.create.mutationOptions({
+      onSuccess: async () => {
+        await queryClient.invalidateQueries(trpc.tasks.pathFilter())
+      },
+    })
+  )
+  const nextPosition =
+    tasks.reduce(
+      (maxPosition, task) => Math.max(maxPosition, task.position ?? -1),
+      -1
+    ) + 1
 
-//   useEffect(() => {
-//     window.addEventListener("dragenter", (e) =>
-//       setIsDragStart(isFileDrag(e as unknown as DragEvent<unknown>))
-//     )
+  useEffect(() => {
+    window.addEventListener("dragenter", (e) =>
+      setIsDragStart(isFileDrag(e as unknown as DragEvent<unknown>))
+    )
 
-//     return () => {
-//       window.removeEventListener("dragenter", () => setIsDragStart(false))
-//     }
-//   }, [])
+    return () => {
+      window.removeEventListener("dragenter", () => setIsDragStart(false))
+    }
+  }, [])
 
-//   const isFileDrag = (e: DragEvent<unknown>) => {
-//     const items = Array.from(e.dataTransfer.items)
+  const isFileDrag = (e: DragEvent<unknown>) => {
+    const items = Array.from(e.dataTransfer.items)
 
-//     if (items.length === 0) {
-//       return false
-//     }
+    if (items.length === 0) {
+      return false
+    }
 
-//     const isFile = items.some((item) => item.kind === "file")
+    const isFile = items.some((item) => item.kind === "file")
 
-//     return isFile
-//   }
+    return isFile
+  }
 
-//   const handleDrag = (e: DragEvent<unknown>) => {
-//     e.preventDefault()
-//     e.stopPropagation()
+  const handleDrag = (e: DragEvent<unknown>) => {
+    e.preventDefault()
+    e.stopPropagation()
 
-//     const isMsgDrag = isFileDrag(e)
+    const isMsgDrag = isFileDrag(e)
 
-//     if (e.type === "dragenter") {
-//       dragDepthRef.current += 1
-//       setIsDragReady(isMsgDrag)
-//       return
-//     }
+    if (e.type === "dragenter") {
+      dragDepthRef.current += 1
+      setIsDragReady(isMsgDrag)
+      return
+    }
 
-//     if (e.type === "dragover") {
-//       if (isMsgDrag) {
-//         e.dataTransfer.dropEffect = "copy"
-//       }
-//       setIsDragReady(isMsgDrag)
-//       return
-//     }
+    if (e.type === "dragover") {
+      if (isMsgDrag) {
+        e.dataTransfer.dropEffect = "copy"
+      }
+      setIsDragReady(isMsgDrag)
+      return
+    }
 
-//     if (e.type === "dragleave") {
-//       dragDepthRef.current = Math.max(0, dragDepthRef.current - 1)
+    if (e.type === "dragleave") {
+      dragDepthRef.current = Math.max(0, dragDepthRef.current - 1)
 
-//       if (dragDepthRef.current === 0) {
-//         setIsDragReady(false)
-//       }
-//     }
-//   }
+      if (dragDepthRef.current === 0) {
+        setIsDragReady(false)
+      }
+    }
+  }
 
-//   const handleDrop = async (e: DragEvent<unknown>) => {
-//     e.preventDefault()
-//     e.stopPropagation()
-//     dragDepthRef.current = 0
-//     setIsDragReady(false)
-//     setIsDragStart(false)
+  const handleDrop = async (e: DragEvent<unknown>) => {
+    e.preventDefault()
+    e.stopPropagation()
+    dragDepthRef.current = 0
+    setIsDragReady(false)
+    setIsDragStart(false)
 
-//     if (e.dataTransfer.files.length > 0) {
-//       await processMsgFile(e.dataTransfer.files[0])
-//     }
-//   }
+    if (e.dataTransfer.files.length > 0 && e.dataTransfer.files[0]) {
+      await processMsgFile(e.dataTransfer.files[0])
+    }
+  }
 
-//   const processMsgFile = async (msgFile: File) => {
-//     const formData = new FormData()
-//     formData.append("file", msgFile)
+  const processMsgFile = async (msgFile: File) => {
+    const formData = new FormData()
+    formData.append("file", msgFile)
 
-//     const { subject, body } = await uploadMsgFn({ data: formData })
+    const { subject, body } = await parseOutlookMsg(formData)
 
-//     await createTask({
-//       data: {
-//         title: subject ?? "No subject",
-//         description: body ?? "",
-//         position: nextPosition,
-//         status: lane as TaskStatusEnumType,
-//       },
-//     })
-//     router.invalidate()
-//   }
+    await createTask.mutateAsync({
+      title: subject ?? "No subject",
+      description: body ?? "",
+      position: nextPosition,
+      status: lane as TaskStatusEnumType,
+    })
+  }
 
-//   return (
-//     <div
-//       onDragEnter={handleDrag}
-//       onDragOver={handleDrag}
-//       onDragLeave={handleDrag}
-//       className={`${isDragStart ? "pointer-events-auto" : "pointer-events-none"} absolute top-0 right-0 bottom-0 left-0`}
-//     >
-//       <div
-//         onDrop={handleDrop}
-//         className={`${isDragReady ? "visible" : "hidden"}`}
-//       >
-//         {/* backdrop */}
-//         <div className="absolute inset-0 z-998 bg-black/30 backdrop-blur"></div>
+  return (
+    <div
+      onDragEnter={handleDrag}
+      onDragOver={handleDrag}
+      onDragLeave={handleDrag}
+      className={`${isDragStart ? "pointer-events-auto" : "pointer-events-none"} absolute top-0 right-0 bottom-0 left-0`}
+    >
+      <div
+        onDrop={handleDrop}
+        className={`${isDragReady ? "visible" : "hidden"}`}
+      >
+        {/* backdrop */}
+        <div className="absolute inset-0 z-998 bg-black/30 backdrop-blur"></div>
 
-//         <div className="absolute inset-2 z-999 flex flex-col items-center justify-center">
-//           <CloudUploadIcon className="text-muted-foreground size-12" />
-//           <p>Add task via Outlook email</p>
-//         </div>
-//       </div>
-//     </div>
-//   )
-// }
+        <div className="absolute inset-2 z-999 flex flex-col items-center justify-center">
+          <CloudUploadIcon className="text-muted-foreground size-12" />
+          <p>Add task via Outlook email</p>
+        </div>
+      </div>
+    </div>
+  )
+}

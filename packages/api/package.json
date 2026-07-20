@@ -20,6 +20,7 @@
   "dependencies": {
     "@kando/auth": "workspace:*",
     "@kando/db": "workspace:*",
+    "@kenjiuno/msgreader-web-ng": "0.2.0-alpha1",
     "@trpc/server": "^11.18.0",
     "superjson": "2.2.3",
     "zod": "^4.4.3"
