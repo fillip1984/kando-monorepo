@@ -107,11 +107,9 @@ const PrimaryNav = () => {
           {data.navMain.map((item) => (
             <SidebarMenuItem key={item.title}>
               <SidebarMenuButton
+                isActive={path === item.url}
                 render={
-                  <Link
-                    href={item.url}
-                    className={`text-lg font-medium ${path === item.url ? "bg-sidebar-primary hover:bg-sidebar-primary" : ""}`}
-                  >
+                  <Link href={item.url}>
                     {item.icon}
                     {item.title}
                   </Link>
