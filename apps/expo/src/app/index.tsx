@@ -1,17 +1,17 @@
-import { useState } from "react";
-import { Pressable, Text, TextInput, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Link, Stack } from "expo-router";
-import { LegendList } from "@legendapp/list";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { LegendList } from "@legendapp/list"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { Link, Stack } from "expo-router"
+import { useState } from "react"
+import { Pressable, Text, TextInput, View } from "react-native"
+import { SafeAreaView } from "react-native-safe-area-context"
 
-import type { RouterOutputs } from "~/utils/api";
-import { trpc } from "~/utils/api";
-import { authClient } from "~/utils/auth";
+import type { RouterOutputs } from "@/utils/api"
+import { trpc } from "@/utils/api"
+import { authClient } from "@/utils/auth"
 
-function PostCard(props: {
-  post: RouterOutputs["post"]["all"][number];
-  onDelete: () => void;
+function TaskCard(props: {
+  task: RouterOutputs["tasks"]["readAll"][number]
+  onDelete: () => void
 }) {
   return (
     <View className="bg-muted flex flex-row rounded-lg p-4">
@@ -19,15 +19,17 @@ function PostCard(props: {
         <Link
           asChild
           href={{
-            pathname: "/post/[id]",
-            params: { id: props.post.id },
+            pathname: "/task/[id]",
+            params: { id: props.task.id },
           }}
         >
           <Pressable className="">
             <Text className="text-primary text-xl font-semibold">
-              {props.post.title}
+              {props.task.title}
             </Text>
-            <Text className="text-foreground mt-2">{props.post.content}</Text>
+            <Text className="text-foreground mt-2">
+              {props.task.description}
+            </Text>
           </Pressable>
         </Link>
       </View>
@@ -35,24 +37,24 @@ function PostCard(props: {
         <Text className="text-primary font-bold uppercase">Delete</Text>
       </Pressable>
     </View>
-  );
+  )
 }
 
-function CreatePost() {
-  const queryClient = useQueryClient();
+function CreateTask() {
+  const queryClient = useQueryClient()
 
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
+  const [title, setTitle] = useState("")
+  const [description, setDescription] = useState("")
 
   const { mutate, error } = useMutation(
-    trpc.post.create.mutationOptions({
+    trpc.tasks.create.mutationOptions({
       async onSuccess() {
-        setTitle("");
-        setContent("");
-        await queryClient.invalidateQueries(trpc.post.all.queryFilter());
+        setTitle("")
+        setDescription("")
+        await queryClient.invalidateQueries(trpc.tasks.readAll.queryFilter())
       },
-    }),
-  );
+    })
+  )
 
   return (
     <View className="mt-4 flex gap-2">
@@ -69,13 +71,13 @@ function CreatePost() {
       )}
       <TextInput
         className="border-input bg-background text-foreground items-center rounded-md border px-3 text-lg leading-tight"
-        value={content}
-        onChangeText={setContent}
-        placeholder="Content"
+        value={description}
+        onChangeText={setDescription}
+        placeholder="Description"
       />
-      {error?.data?.zodError?.fieldErrors.content && (
+      {error?.data?.zodError?.fieldErrors.description && (
         <Text className="text-destructive mb-2">
-          {error.data.zodError.fieldErrors.content}
+          {error.data.zodError.fieldErrors.description}
         </Text>
       )}
       <Pressable
@@ -83,23 +85,25 @@ function CreatePost() {
         onPress={() => {
           mutate({
             title,
-            content,
-          });
+            description,
+            position: 9999,
+            status: "Todo",
+          })
         }}
       >
         <Text className="text-foreground">Create</Text>
       </Pressable>
       {error?.data?.code === "UNAUTHORIZED" && (
         <Text className="text-destructive mt-2">
-          You need to be logged in to create a post
+          You need to be logged in to create a task
         </Text>
       )}
     </View>
-  );
+  )
 }
 
 function MobileAuth() {
-  const { data: session } = authClient.useSession();
+  const { data: session } = authClient.useSession()
 
   return (
     <>
@@ -111,29 +115,29 @@ function MobileAuth() {
           session
             ? authClient.signOut()
             : authClient.signIn.social({
-                provider: "discord",
+                provider: "google",
                 callbackURL: "/",
               })
         }
         className="bg-primary flex items-center rounded-sm p-2"
       >
-        <Text>{session ? "Sign Out" : "Sign In With Discord"}</Text>
+        <Text>{session ? "Sign Out" : "Sign In With Google"}</Text>
       </Pressable>
     </>
-  );
+  )
 }
 
 export default function Index() {
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient()
 
-  const postQuery = useQuery(trpc.post.all.queryOptions());
+  const taskQuery = useQuery(trpc.tasks.readAll.queryOptions())
 
-  const deletePostMutation = useMutation(
-    trpc.post.delete.mutationOptions({
+  const deleteTaskMutation = useMutation(
+    trpc.tasks.delete.mutationOptions({
       onSettled: () =>
-        queryClient.invalidateQueries(trpc.post.all.queryFilter()),
-    }),
-  );
+        queryClient.invalidateQueries(trpc.tasks.readAll.queryFilter()),
+    })
+  )
 
   return (
     <SafeAreaView className="bg-background">
@@ -148,25 +152,25 @@ export default function Index() {
 
         <View className="py-2">
           <Text className="text-primary font-semibold italic">
-            Press on a post
+            Press on a task
           </Text>
         </View>
 
         <LegendList
-          data={postQuery.data ?? []}
+          data={taskQuery.data ?? []}
           estimatedItemSize={20}
           keyExtractor={(item) => item.id}
           ItemSeparatorComponent={() => <View className="h-2" />}
           renderItem={(p) => (
-            <PostCard
-              post={p.item}
-              onDelete={() => deletePostMutation.mutate(p.item.id)}
+            <TaskCard
+              task={p.item}
+              onDelete={() => deleteTaskMutation.mutate({ id: p.item.id })}
             />
           )}
         />
 
-        <CreatePost />
+        <CreateTask />
       </View>
     </SafeAreaView>
-  );
+  )
 }

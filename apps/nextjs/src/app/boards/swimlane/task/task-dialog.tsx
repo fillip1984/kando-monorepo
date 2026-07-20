@@ -703,7 +703,7 @@ const CommentsSection = ({ task }: { task: TaskType }) => {
                   disabled={!isNewCommentContentValid}
                   onClick={handleCreateComment}
                 >
-                  Post
+                  Task
                 </InputGroupButton>
               </InputGroupAddon>
             </InputGroup>
