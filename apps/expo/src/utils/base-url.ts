@@ -16,10 +16,18 @@ export const getBaseUrl = () => {
   const debuggerHost = Constants.expoConfig?.hostUri
   const localhost = debuggerHost?.split(":")[0]
 
-  if (!localhost) {
-    throw new Error(
-      "Failed to get localhost. Please point to your production server."
-    )
-  }
-  return `http://${localhost}:3000`
+  // console.log("localhost:", localhost) <-- this comes out as 192.168.68.62 or whatever the laptop ip is
+  // if (!localhost) {
+  //   throw new Error(
+  //     "Failed to get localhost. Please point to your production server."
+  //   )
+  // }
+  // return `http://${localhost}:3000`
+
+  // TODO: we could grab the ip address of the debuggerHost but better-auth doesn't play nicely with it...
+  // or google doesn't like that we're using a url that doesn't match a registered oauth redirect url
+  const baseUrl = !localhost
+    ? "https://kando.illizen.com"
+    : "http://localhost:3000"
+  return baseUrl
 }
