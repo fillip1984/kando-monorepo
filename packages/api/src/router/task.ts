@@ -16,6 +16,7 @@ export const taskRouter = createTRPCRouter({
         status: z.enum(TaskStatusEnumValues),
         priority: z.enum(TaskPriorityEnumValues).optional().nullable(),
         position: z.number(),
+        emailSubjectLine: z.string().optional().nullable(),
       })
     )
     .mutation(async ({ ctx, input }) => {

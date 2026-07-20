@@ -1,11 +1,15 @@
 "use client"
 
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 import Container from "@/components/custom-ui/container"
 import { Button } from "@/components/ui/button"
 import { useTRPC } from "@/trpc/react"
-import { CloudDownloadIcon } from "lucide-react"
+import type { TaskType } from "@kando/api"
+import { CloudDownloadIcon, CloudUploadIcon } from "lucide-react"
+import type { ChangeEvent } from "react"
+import { useRef } from "react"
+import { toast } from "sonner"
 
 export default function PreferencesPage() {
   return (
@@ -23,6 +27,7 @@ const ImportExportSection = () => {
   // const router = useRouter();
 
   // export/import data stuff
+  const queryClient = useQueryClient()
   const trpc = useTRPC()
   const exportData = useMutation(
     trpc.settings.exportData.mutationOptions({
@@ -48,85 +53,75 @@ const ImportExportSection = () => {
     })
   )
 
-  // const { mutate: importData } = api.admin.importData.useMutation({
-  //   onSuccess: () => {
-  //     // toast.success("Vendor file uploaded", {
-  //     //   duration: 4000,
-  //     //   position: "top-center",
-  //     // });
-  //     void utils.measurable.invalidate();
-  //     void utils.area.invalidate();
-  //     void router.push("/");
-  //   },
-  // });
+  const { mutate: importData } = useMutation(
+    trpc.settings.importData.mutationOptions({
+      onSuccess: async () => {
+        toast.success("Import successful")
+        await queryClient.invalidateQueries(trpc.tasks.pathFilter())
+        await queryClient.invalidateQueries(trpc.tags.pathFilter())
+      },
+    })
+  )
 
-  // const fileInputRef = useRef<HTMLInputElement>(null);
-  // const triggerFileBrowse = () => {
-  //   fileInputRef.current?.click();
-  // };
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const triggerFileBrowse = () => {
+    fileInputRef.current?.click()
+  }
 
-  // const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-  //   e.preventDefault();
-  //   e.stopPropagation();
-  //   if (e.target.files) {
-  //     Array.from(e.target.files).forEach((file) => processFile(file));
-  //   }
-  // };
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault()
+    e.stopPropagation()
+    if (e.target.files) {
+      Array.from(e.target.files).forEach((file) => processFile(file))
+    }
+  }
 
-  // const processFile = (file: File) => {
-  //   try {
-  //     const fr = new FileReader();
-  //     fr.onload = convertFileToDataUrl;
-  //     fr.readAsDataURL(file);
-  //   } finally {
-  //     if (fileInputRef.current) {
-  //       fileInputRef.current.value = "";
-  //     }
-  //   }
-  // };
+  const processFile = (file: File) => {
+    try {
+      const fr = new FileReader()
+      fr.onload = convertFileToDataUrl
+      fr.readAsDataURL(file)
+    } finally {
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ""
+      }
+    }
+  }
 
-  // const convertFileToDataUrl = (e: ProgressEvent<FileReader>) => {
-  //   const dataUrlString = e.target?.result;
-  //   const dataUrl = dataUrlString as string;
-  //   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  //   const data = dataUrl.split(",")[1]!;
-  //   const buffer = Buffer.from(data, "base64");
-  //   const string = buffer.toString();
-  //   const json = JSON.parse(string) as {
-  //     areas: AreaType[];
-  //     measurables: MeasurableType[];
-  //   };
-  //   const areas = json.areas;
-  //   const measurables = json.measurables.map((measurable) => ({
-  //     ...measurable,
-  //     setDate: new Date(measurable.setDate),
-  //     dueDate: measurable.dueDate ? new Date(measurable.dueDate) : null,
-  //     interval: measurable.interval ?? undefined,
-  //   }));
+  const convertFileToDataUrl = (e: ProgressEvent<FileReader>) => {
+    const dataUrlString = e.target?.result
+    const dataUrl = dataUrlString as string
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const data = dataUrl.split(",")[1]!
+    const buffer = Buffer.from(data, "base64")
+    const string = buffer.toString()
+    const json = JSON.parse(string) as {
+      tasks: TaskType[]
+    }
 
-  //   importData({ areas, measurables });
-  // };
+    importData({ tasks: json.tasks })
+  }
 
   return (
     <>
       <h5>Import/Export</h5>
       <p>Manage your data import and export settings.</p>
       <div className="flex gap-4">
-        {/* <Button variant="outline" onClick={triggerFileBrowse}>
-          Import Data <FiUploadCloud />
-        </Button> */}
+        <Button variant="outline" onClick={triggerFileBrowse}>
+          Import Data <CloudUploadIcon />
+        </Button>
         <Button variant="outline" onClick={() => exportData.mutate()}>
           Export Data <CloudDownloadIcon />
         </Button>
       </div>
-      {/* <input
+      <input
         ref={fileInputRef}
         type="file"
         accept=".json"
         multiple={true}
         className="hidden"
         onChange={handleFileChange}
-      /> */}
+      />
     </>
   )
 }
