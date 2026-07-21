@@ -6,8 +6,11 @@ packages:
 linkWorkspacePackages: true
 
 onlyBuiltDependencies:
+  - "@prisma/client"
   - "@tailwindcss/oxide"
+  - better-sqlite3
   - esbuild
+  - sharp
 
 overrides:
   "@types/minimatch": 5.1.2
