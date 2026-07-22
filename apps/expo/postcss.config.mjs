@@ -1,1 +1,5 @@
-export { default } from "@kando/tailwind-config/postcss-config";
+export default {
+  plugins: {
+    "@tailwindcss/postcss": {},
+  },
+}

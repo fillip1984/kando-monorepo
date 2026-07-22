@@ -1,8 +1,6 @@
-import { Lucide } from "@react-native-vector-icons/lucide/static"
 import * as LocalAuthentication from "expo-local-authentication"
 import { Stack } from "expo-router"
 import { useState } from "react"
-import { Pressable, Text, TextInput, View } from "react-native"
 import { GestureHandlerRootView } from "react-native-gesture-handler"
 import { SafeAreaView } from "react-native-safe-area-context"
 
@@ -11,6 +9,7 @@ import { toast, Toaster } from "sonner-native"
 import "@/styles.css"
 import { authClient } from "@/utils/auth"
 import { colors } from "@/utils/color-utils"
+import { Text, View } from "react-native"
 
 export default function RootLayout() {
   const { data: session } = authClient.useSession()
@@ -112,10 +111,11 @@ const Login = () => {
   }
 
   return (
-    <GestureHandlerRootView>
-      <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
-        <View className="flex h-screen items-center gap-4 p-4">
-          <Text className="text-3xl text-white">locutus</Text>
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
+      <View>
+        <Text className="text-3xl text-red-500">locutus</Text>
+      </View>
+      {/* <View className="flex h-screen items-center gap-4 p-4">
 
           <View className="flex w-full gap-3">
             <View className="my-4 flex gap-3">
@@ -165,9 +165,9 @@ const Login = () => {
               </Pressable>
             </View>
           </View>
-        </View>
-      </SafeAreaView>
+        </View> */}
       <Toaster />
-    </GestureHandlerRootView>
+    </SafeAreaView>
+    // </GestureHandlerRootView>
   )
 }
