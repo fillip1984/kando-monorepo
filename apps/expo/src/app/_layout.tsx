@@ -83,23 +83,25 @@ const Login = ({ biometricsAvailable }: { biometricsAvailable: boolean }) => {
   return (
     <GestureHandlerRootView>
       <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
-        <View className="flex flex-1 items-center justify-center">
+        <View className="flex flex-1 items-center justify-center gap-3">
           <Text className="text-4xl font-bold text-white">locutus</Text>
-          <Pressable
-            onPress={handleSignIn}
-            className="rounded bg-emerald-300 p-2"
-          >
-            <Text className="text-lg text-black">Login</Text>
-          </Pressable>
+          <View className="flex flex-row gap-2 space-x-4">
+            <Pressable
+              onPress={handleSignIn}
+              className="flex w-22 items-center justify-center rounded bg-emerald-300 p-2"
+            >
+              <Text className="text-xl font-bold text-black">Login</Text>
+            </Pressable>
+            <Pressable
+              onPress={triggerLocalBiometrics}
+              className={`rounded bg-slate-600 p-3 ${!biometricsAvailable ? "opacity-50" : ""}`}
+              disabled={!biometricsAvailable}
+            >
+              <Lucide name="scan-face" size={42} color="white" />
+            </Pressable>
+          </View>
         </View>
 
-        <Pressable
-          onPress={triggerLocalBiometrics}
-          className={`rounded bg-slate-600 p-3 ${!biometricsAvailable ? "opacity-50" : ""}`}
-          disabled={!biometricsAvailable}
-        >
-          <Lucide name="scan-face" size={42} color="white" />
-        </Pressable>
         <Toaster />
       </SafeAreaView>
     </GestureHandlerRootView>
