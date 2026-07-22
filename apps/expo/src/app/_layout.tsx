@@ -80,7 +80,7 @@ export default function RootLayout() {
           options={{
             title: "Settings",
             tabBarIcon: ({ color }) => (
-              <Lucide name="settings" size={24} color={color} />
+              <Lucide name="settings-2" size={24} color={color} />
             ),
           }}
         />

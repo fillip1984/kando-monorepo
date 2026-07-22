@@ -40,6 +40,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     reactCompiler: true,
   },
   plugins: [
+    "@react-native-vector-icons/lucide",
     "expo-router",
     "expo-secure-store",
     "expo-web-browser",
