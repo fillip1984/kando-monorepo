@@ -41,6 +41,10 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   },
   plugins: [
     "@react-native-vector-icons/lucide",
+    [
+      "expo-local-authentication",
+      { faceIDPermission: "Allow $(PRODUCT_NAME) to use Face ID" },
+    ],
     "expo-router",
     "expo-secure-store",
     "expo-web-browser",

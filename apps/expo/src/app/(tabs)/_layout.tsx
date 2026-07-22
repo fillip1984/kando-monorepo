@@ -1,5 +1,10 @@
+import { queryClient } from "@/utils/api"
 import { authClient } from "@/utils/auth"
-import { focusManager, onlineManager } from "@tanstack/react-query"
+import {
+  focusManager,
+  onlineManager,
+  QueryClientProvider,
+} from "@tanstack/react-query"
 import * as Network from "expo-network"
 import { NativeTabs } from "expo-router/build/native-tabs"
 import { useEffect, useState } from "react"
@@ -40,18 +45,18 @@ export default function RootLayout() {
   }, [session])
 
   return (
-    // <QueryClientProvider client={queryClient}>
-    <NativeTabs>
-      <NativeTabs.Trigger name="index">
-        <NativeTabs.Trigger.Icon sf="house" />
-      </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="board">
-        <NativeTabs.Trigger.Icon sf="square.grid.2x2.fill" />
-      </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="settings">
-        <NativeTabs.Trigger.Icon sf="gearshape.fill" />
-      </NativeTabs.Trigger>
-    </NativeTabs>
-    // </QueryClientProvider>
+    <QueryClientProvider client={queryClient}>
+      <NativeTabs>
+        <NativeTabs.Trigger name="index">
+          <NativeTabs.Trigger.Icon sf="house" />
+        </NativeTabs.Trigger>
+        <NativeTabs.Trigger name="board">
+          <NativeTabs.Trigger.Icon sf="square.grid.2x2.fill" />
+        </NativeTabs.Trigger>
+        <NativeTabs.Trigger name="settings">
+          <NativeTabs.Trigger.Icon sf="gearshape.fill" />
+        </NativeTabs.Trigger>
+      </NativeTabs>
+    </QueryClientProvider>
   )
 }

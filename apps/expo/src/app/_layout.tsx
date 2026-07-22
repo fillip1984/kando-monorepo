@@ -1,23 +1,54 @@
 import "@/global.css"
 import { authClient } from "@/utils/auth"
+import { triggerLocalBiometrics } from "@/utils/biometric-utils"
 import { colors } from "@/utils/color-utils"
 import { Lucide } from "@react-native-vector-icons/lucide"
 import * as LocalAuthentication from "expo-local-authentication"
 import { Stack } from "expo-router"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Pressable, Text, View } from "react-native"
 import { GestureHandlerRootView } from "react-native-gesture-handler"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { toast, Toaster } from "sonner-native"
 
 export default function RootLayout() {
+  const [biometricsAvailable, setBiometricsAvailable] = useState(false)
+  useEffect(() => {
+    const checkBiometrics = async () => {
+      const canUseBiometrics =
+        (await LocalAuthentication.hasHardwareAsync()) &&
+        (await LocalAuthentication.isEnrolledAsync())
+      setBiometricsAvailable(canUseBiometrics)
+    }
+    checkBiometrics()
+  }, [])
+
+  useEffect(() => {
+    const checkAppAccess = async () => {
+      // Better Auth checks if a session token natively exists in Expo SecureStore
+      const { data: session } = await authClient.getSession()
+
+      if (session) {
+        // User is logged into Better Auth server, but we gate the UI with local biometrics
+        const localized = await triggerLocalBiometrics()
+        // if (localized) {
+
+        // }
+      } else {
+        // No active server session found; push to primary authentication screen
+        // router.replace("/login")
+      }
+    }
+    checkAppAccess()
+  }, [])
+
   const { data: session } = authClient.useSession()
   console.log(session)
   if (session) {
     return <MainLayout />
   }
 
-  return <Login />
+  return <Login biometricsAvailable={biometricsAvailable} />
 }
 
 const MainLayout = () => {
@@ -31,24 +62,8 @@ const MainLayout = () => {
   )
 }
 
-const Login = () => {
+const Login = ({ biometricsAvailable }: { biometricsAvailable: boolean }) => {
   const [loading, setLoading] = useState(false)
-  const [canLogInWithBiometrics, setCanLogInWithBiometrics] = useState(false)
-
-  const requestAndAuthenticateViaBiometrics = async () => {
-    const authenticated = await LocalAuthentication.authenticateAsync({
-      promptMessage: "Authenticate with Face ID",
-    })
-
-    if (authenticated.success) {
-      return true
-    } else {
-      console.warn(authenticated.error)
-      return false
-    }
-  }
-
-  //   const { logIn, logInWithBiometrics } = useSessionStore()
 
   const handleSignIn = async () => {
     try {
@@ -57,29 +72,11 @@ const Login = () => {
         provider: "google",
         callbackURL: "/",
       })
-      //   const success = await logIn(serverUrl, username, password)
-      //   if (!success) {
-      //     toast.error("Invalid username or password")
-      //   }
-      // const bioAuthResult = await requestAndAuthenticateViaBiometrics();
-      // if (bioAuthResult) {
-      //   await logInWithBiometrics(bioAuthResult);
-      // }
-    } catch {
+    } catch (e) {
+      console.error(e)
       toast.error("Unknown error")
     } finally {
       setLoading(false)
-    }
-  }
-
-  const handleLoginWithBiometrics = async () => {
-    try {
-      const bioAuthResult = await requestAndAuthenticateViaBiometrics()
-      if (bioAuthResult) {
-        // await logInWithBiometrics(bioAuthResult)
-      }
-    } catch {
-      toast.error("Unknown error")
     }
   }
 
@@ -97,9 +94,9 @@ const Login = () => {
         </View>
 
         <Pressable
-          onPress={handleLoginWithBiometrics}
-          className={`rounded bg-slate-600 p-3 ${!canLogInWithBiometrics ? "opacity-50" : ""}`}
-          disabled={!canLogInWithBiometrics}
+          onPress={triggerLocalBiometrics}
+          className={`rounded bg-slate-600 p-3 ${!biometricsAvailable ? "opacity-50" : ""}`}
+          disabled={!biometricsAvailable}
         >
           <Lucide name="scan-face" size={42} color="white" />
         </Pressable>
