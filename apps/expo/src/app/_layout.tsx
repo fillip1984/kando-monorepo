@@ -1,90 +1,173 @@
-import { queryClient } from "@/utils/api"
-import { authClient } from "@/utils/auth"
 import { Lucide } from "@react-native-vector-icons/lucide/static"
-import {
-  focusManager,
-  onlineManager,
-  QueryClientProvider,
-} from "@tanstack/react-query"
-import * as Network from "expo-network"
-import { Tabs } from "expo-router"
-import { useEffect, useState } from "react"
-import type { AppStateStatus } from "react-native"
-import { AppState, Platform, useColorScheme } from "react-native"
-import "../styles.css"
+import * as LocalAuthentication from "expo-local-authentication"
+import { Stack } from "expo-router"
+import { useState } from "react"
+import { Pressable, Text, TextInput, View } from "react-native"
+import { GestureHandlerRootView } from "react-native-gesture-handler"
+import { SafeAreaView } from "react-native-safe-area-context"
 
-// This is the main layout of the app
-// It wraps your pages with the providers they need
+import { toast, Toaster } from "sonner-native"
+
+import "@/styles.css"
+import { authClient } from "@/utils/auth"
+import { colors } from "@/utils/color-utils"
+
 export default function RootLayout() {
-  const colorScheme = useColorScheme()
+  const { data: session } = authClient.useSession()
+  console.log(session)
+  // if (session?.user) {
+  //   return <MainLayout />
+  // }
 
-  // refetch when network connection is restored
-  onlineManager.setEventListener((setOnline) => {
-    const eventSubscription = Network.addNetworkStateListener((state) => {
-      setOnline(!!state.isConnected)
+  return <Login />
+}
+
+const MainLayout = () => {
+  return (
+    <GestureHandlerRootView>
+      <Stack>
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        {/* <Stack.Screen
+          name="media/[id]"
+          options={{
+            headerShown: false,
+            presentation: "modal",
+          }}
+        />
+        <Stack.Screen
+          name="player/[id]"
+          options={{
+            headerShown: false,
+            presentation: "modal",
+          }}
+        />
+        <Stack.Screen name="reader/[id]" options={{}} /> */}
+      </Stack>
+      <Toaster />
+    </GestureHandlerRootView>
+  )
+}
+
+const Login = () => {
+  const [serverUrl, setServerUrl] = useState(
+    process.env.EXPO_PUBLIC_AUDIOBOOK_SHELF_API_URL ?? ""
+  )
+  const [username, setUsername] = useState("")
+  const [password, setPassword] = useState("")
+  const [loading, setLoading] = useState(false)
+  const [canLogInWithBiometrics, setCanLogInWithBiometrics] = useState(false)
+
+  const requestAndAuthenticateViaBiometrics = async () => {
+    const authenticated = await LocalAuthentication.authenticateAsync({
+      promptMessage: "Authenticate with Face ID",
     })
-    return () => eventSubscription.remove()
-  })
 
-  // refetch when app is made active again
-  function onAppStateChange(status: AppStateStatus) {
-    if (Platform.OS !== "web") {
-      focusManager.setFocused(status === "active")
+    if (authenticated.success) {
+      return true
+    } else {
+      console.warn(authenticated.error)
+      return false
     }
   }
-  useEffect(() => {
-    const subscription = AppState.addEventListener("change", onAppStateChange)
-    return () => subscription.remove()
-  }, [])
 
-  //auth
-  const { data: session } = authClient.useSession()
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setIsLoggedIn(!!session?.user)
-  }, [session])
+  //   const { logIn, logInWithBiometrics } = useSessionStore()
+
+  const handleLogin = async () => {
+    try {
+      if (!serverUrl || !username || !password) {
+        toast.warning("Please fill in all fields")
+        return
+      }
+
+      setLoading(true)
+      //   const success = await logIn(serverUrl, username, password)
+      //   if (!success) {
+      //     toast.error("Invalid username or password")
+      //   }
+      // const bioAuthResult = await requestAndAuthenticateViaBiometrics();
+      // if (bioAuthResult) {
+      //   await logInWithBiometrics(bioAuthResult);
+      // }
+    } catch {
+      toast.error("Unknown error")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleLoginWithBiometrics = async () => {
+    try {
+      if (!serverUrl) {
+        toast.warning("Please set server url first")
+        return
+      }
+
+      const bioAuthResult = await requestAndAuthenticateViaBiometrics()
+      if (bioAuthResult) {
+        // await logInWithBiometrics(bioAuthResult)
+      }
+    } catch {
+      toast.error("Unknown error")
+    }
+  }
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <Tabs
-        screenOptions={{
-          headerShown: false,
-          tabBarActiveTintColor: "#fff",
-          tabBarStyle: {
-            backgroundColor: "rgb(30 41 59)",
-            borderBlockColor: "rgb(30 41 59)",
-          },
-        }}
-      >
-        <Tabs.Screen
-          name="index"
-          options={{
-            title: "Home",
-            tabBarIcon: ({ color }) => (
-              <Lucide name="house" size={24} color={color} />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="board"
-          options={{
-            title: "Board",
-            tabBarIcon: ({ color }) => (
-              <Lucide name="library" size={24} color={color} />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="settings"
-          options={{
-            title: "Settings",
-            tabBarIcon: ({ color }) => (
-              <Lucide name="settings-2" size={24} color={color} />
-            ),
-          }}
-        />
-      </Tabs>
-    </QueryClientProvider>
+    <GestureHandlerRootView>
+      <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
+        <View className="flex h-screen items-center gap-4 p-4">
+          <Text className="text-3xl text-white">locutus</Text>
+
+          <View className="flex w-full gap-3">
+            <View className="my-4 flex gap-3">
+              <View className="flex w-full flex-row items-center gap-2">
+                <Lucide name="user" size={32} color="white" />
+                <TextInput
+                  value={username}
+                  onChangeText={(text) => setUsername(text)}
+                  placeholder="Username"
+                  className="flex-1 rounded bg-white p-2 text-xl text-black"
+                  autoCapitalize="none"
+                />
+              </View>
+
+              <View className="flex w-full flex-row items-center gap-2">
+                <Lucide name="key-round" size={32} color="white" />
+                <TextInput
+                  value={password}
+                  onChangeText={(text) => setPassword(text)}
+                  placeholder="Password"
+                  secureTextEntry
+                  className="flex-1 rounded bg-white p-2 text-xl text-black"
+                  autoCapitalize="none"
+                />
+              </View>
+            </View>
+
+            <View className="flex flex-row items-center gap-4">
+              <Pressable
+                onPress={handleLogin}
+                className="flex flex-1 flex-row items-center justify-center gap-3 rounded bg-slate-600 px-4 py-2"
+              >
+                {loading && (
+                  <View className="animate-spin">
+                    <Lucide name="loader-circle" size={32} color="white" />
+                  </View>
+                )}
+                <Text className="text-3xl text-white">Login</Text>
+              </Pressable>
+
+              <Pressable
+                onPress={handleLoginWithBiometrics}
+                className={`rounded bg-slate-600 p-3 ${!canLogInWithBiometrics ? "opacity-50" : ""}`}
+                disabled={!canLogInWithBiometrics}
+              >
+                <Lucide name="scan-face" size={42} color="white" />
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </SafeAreaView>
+      <Toaster />
+    </GestureHandlerRootView>
   )
 }
