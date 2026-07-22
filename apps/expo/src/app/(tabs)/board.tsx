@@ -1,3 +1,4 @@
+import { TaskCard } from "@/components/task-card"
 import { trpc } from "@/utils/api"
 import { useQuery } from "@tanstack/react-query"
 import { Text, View } from "react-native"
@@ -8,10 +9,11 @@ export default function BoardScreen() {
 
   return (
     <SafeAreaView>
-      <View>
+      <View className="flex h-screen bg-olive-300 p-2">
         <Text>Board</Text>
         {tasks.data?.map((task) => (
-          <Text key={task.id}>{task.title}</Text>
+          // <Text key={task.id}>{task.title}</Text>
+          <TaskCard key={task.id} task={task} />
         ))}
       </View>
     </SafeAreaView>

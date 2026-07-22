@@ -30,9 +30,8 @@ export default function RootLayout() {
 
       if (session) {
         // User is logged into Better Auth server, but we gate the UI with local biometrics
-        const localized = await triggerLocalBiometrics()
+        // const localized = await triggerLocalBiometrics()
         // if (localized) {
-
         // }
       } else {
         // No active server session found; push to primary authentication screen
