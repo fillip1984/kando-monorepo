@@ -29,6 +29,7 @@ import {
   TagIcon,
 } from "lucide-react"
 import { useTheme } from "next-themes"
+import Image from "next/image"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
@@ -84,12 +85,12 @@ const Branding = () => {
       <SidebarMenu>
         <SidebarMenuItem>
           <SidebarMenuButton size="lg" render={<Link href="/" />}>
-            <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-              <KanbanIcon className="size-4" />
-            </div>
-            <div className="gap-0.5 leading-none">
-              <span className="font-medium">todo</span>
-            </div>
+            <Image
+              src="/kando-logo.jpg"
+              alt="kando very tasteful logo"
+              width={150}
+              height={50}
+            />
           </SidebarMenuButton>
         </SidebarMenuItem>
       </SidebarMenu>
