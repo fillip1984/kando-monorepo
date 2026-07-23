@@ -53,8 +53,18 @@ export default function RootLayout() {
 const MainLayout = () => {
   return (
     <GestureHandlerRootView>
-      <Stack>
+      <Stack
+        screenOptions={{
+          headerShown: false,
+        }}
+      >
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="(task)/new-task-sheet"
+          options={{
+            presentation: "modal",
+          }}
+        />
       </Stack>
       <Toaster />
     </GestureHandlerRootView>
