@@ -1,8 +1,10 @@
 import "@/global.css"
+import { queryClient } from "@/utils/api"
 import { authClient } from "@/utils/auth"
 import { triggerLocalBiometrics } from "@/utils/biometric-utils"
 import { colors } from "@/utils/color-utils"
 import { Lucide } from "@react-native-vector-icons/lucide"
+import { QueryClientProvider } from "@tanstack/react-query"
 import * as LocalAuthentication from "expo-local-authentication"
 import { Stack } from "expo-router"
 import { useEffect, useState } from "react"
@@ -53,20 +55,32 @@ export default function RootLayout() {
 const MainLayout = () => {
   return (
     <GestureHandlerRootView>
-      <Stack
-        screenOptions={{
-          headerShown: false,
-        }}
-      >
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen
-          name="(task)/new-task-sheet"
-          options={{
-            presentation: "modal",
+      <QueryClientProvider client={queryClient}>
+        <Stack
+          screenOptions={{
+            headerShown: false,
           }}
-        />
-      </Stack>
-      <Toaster />
+        >
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="(task)/new-task-sheet"
+            options={{
+              presentation: "formSheet",
+              sheetAllowedDetents: [0.5, 1],
+              sheetInitialDetentIndex: 0,
+            }}
+          />
+          <Stack.Screen
+            name="(task)/[id]"
+            options={{
+              presentation: "formSheet",
+              sheetAllowedDetents: [0.5, 0.75, 1],
+              sheetInitialDetentIndex: 1,
+            }}
+          />
+        </Stack>
+        <Toaster />
+      </QueryClientProvider>
     </GestureHandlerRootView>
   )
 }

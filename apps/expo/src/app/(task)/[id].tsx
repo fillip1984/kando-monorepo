@@ -1,11 +1,24 @@
 import { Input } from "@/components/ui/input"
 import { trpc } from "@/utils/api"
 import Lucide from "@react-native-vector-icons/lucide/static"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { useState } from "react"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { useLocalSearchParams } from "expo-router"
+import { useEffect, useState } from "react"
 import { Pressable, View } from "react-native"
 
-export default function NewTaskSheet() {
+export default function TaskDetailsSheet() {
+  const { id } = useLocalSearchParams()
+
+  const readTaskById = useQuery(
+    trpc.tasks.readById.queryOptions({ id: id as string }, { enabled: !!id })
+  )
+  useEffect(() => {
+    if (readTaskById.data) {
+      setTitle(readTaskById.data.title)
+      setDescription(readTaskById.data.description ?? "")
+    }
+  }, [readTaskById.data])
+
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
 

@@ -9,8 +9,8 @@ import { Badge } from "./ui/badge"
 export function TaskCard({ task }: { task: TaskType }) {
   return (
     <Link
-      href={"/(task)/new-task-sheet"}
-      className="flex shrink-0 flex-col rounded-lg border p-2"
+      href={`/(task)/${task.id}`}
+      className="flex h-30 flex-col rounded-lg border p-2"
     >
       <View className="flex flex-col">
         <View className="flex-row items-start justify-between">
