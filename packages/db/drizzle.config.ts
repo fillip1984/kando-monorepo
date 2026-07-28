@@ -29,7 +29,6 @@ const dbCredentials: DBCredentials = databaseUrl.hostname.includes("localhost")
       database: databaseUrl.pathname.replace(/^\//, ""),
       ssl: "require",
     }
-console.log({ dbCredentials })
 export default {
   schema: "./src/schema/index.ts",
   dialect: "postgresql",

@@ -7,6 +7,9 @@ import { relations } from "./schema/relations"
 
 const client = postgres(env.DATABASE_URL, {
   prepare: false,
+  ssl: {
+    rejectUnauthorized: false,
+  },
 })
 
 export const db = drizzle({
