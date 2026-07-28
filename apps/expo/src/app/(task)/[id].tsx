@@ -32,6 +32,8 @@ export default function TaskDetailsSheet() {
     trpc.tasks.readById.queryOptions({ id: id as string }, { enabled: !!id })
   )
 
+  const tags = useQuery(trpc.tags.readAll.queryOptions())
+
   const title = useNativeState("")
   const description = useNativeState("")
   const [status, setStatus] = useState<TaskStatusEnumType>("Todo")

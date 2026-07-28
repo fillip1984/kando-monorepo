@@ -40,7 +40,7 @@ export default function RootLayout() {
   }, [session])
 
   return (
-    <NativeTabs>
+    <NativeTabs minimizeBehavior="onScrollDown">
       <NativeTabs.Trigger name="index">
         <NativeTabs.Trigger.Icon sf="house" />
       </NativeTabs.Trigger>
