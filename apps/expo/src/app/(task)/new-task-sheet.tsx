@@ -1,53 +1,60 @@
-import { Input } from "@/components/ui/input"
 import { trpc } from "@/utils/api"
-import Lucide from "@react-native-vector-icons/lucide/static"
+import {
+  Button,
+  Form,
+  Host,
+  Section,
+  TextField,
+  useNativeState,
+} from "@expo/ui/swift-ui"
+import { fixedSize, lineLimit } from "@expo/ui/swift-ui/modifiers"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { useState } from "react"
-import { Pressable, View } from "react-native"
+import { useRouter } from "expo-router"
 
 export default function NewTaskSheet() {
-  const [title, setTitle] = useState("")
-  const [description, setDescription] = useState("")
+  const title = useNativeState("")
+  const description = useNativeState("")
 
+  const router = useRouter()
   const queryClient = useQueryClient()
   const createTask = useMutation(
     trpc.tasks.create.mutationOptions({
       async onSuccess() {
-        setTitle("")
-        setDescription("")
         await queryClient.invalidateQueries(trpc.tasks.pathFilter())
+        router.dismiss()
+        title.set("")
+        description.set("")
       },
     })
   )
 
   return (
-    <View className="flex gap-2 p-4">
-      <Input
-        value={title}
-        onChange={setTitle}
-        placeholder="Task title"
-        className="w-full text-xl"
-      />
-
-      <Input
-        value={description}
-        onChange={setDescription}
-        placeholder="Description (optional)"
-        className="w-full"
-      />
-      <Pressable
-        className="ml-auto size-10 rounded-full bg-blue-500 p-2"
-        onPress={() => {
-          createTask.mutate({
-            title,
-            description,
-            status: "Todo",
-            position: 9999,
-          })
-        }}
-      >
-        <Lucide name="plus" color="white" size={24} />
-      </Pressable>
-    </View>
+    <Host style={{ flex: 1 }}>
+      <Form>
+        <Section>
+          <TextField placeholder="Task title..." text={title} />
+          <TextField
+            placeholder="Task description..."
+            axis="vertical"
+            text={description}
+            modifiers={[
+              lineLimit(5),
+              fixedSize({ horizontal: false, vertical: true }),
+            ]}
+          />
+        </Section>
+        <Button
+          label="Create Task"
+          onPress={() => {
+            createTask.mutate({
+              title: title.get(),
+              description: description.get(),
+              status: "Todo",
+              position: 9999,
+            })
+          }}
+        />
+      </Form>
+    </Host>
   )
 }

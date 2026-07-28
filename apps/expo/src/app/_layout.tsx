@@ -68,6 +68,10 @@ const MainLayout = () => {
               presentation: "formSheet",
               sheetAllowedDetents: [0.5, 1],
               sheetInitialDetentIndex: 0,
+              sheetGrabberVisible: true,
+              contentStyle: {
+                backgroundColor: "#ffffff", // Set your solid color here
+              },
             }}
           />
           <Stack.Screen
@@ -76,6 +80,10 @@ const MainLayout = () => {
               presentation: "formSheet",
               sheetAllowedDetents: [0.5, 0.75, 1],
               sheetInitialDetentIndex: 1,
+              sheetGrabberVisible: true,
+              contentStyle: {
+                backgroundColor: "#ffffff", // Set your solid color here
+              },
             }}
           />
         </Stack>
@@ -113,7 +121,11 @@ const Login = ({ biometricsAvailable }: { biometricsAvailable: boolean }) => {
               onPress={handleSignIn}
               className="flex w-22 items-center justify-center rounded bg-emerald-300 p-2"
             >
-              <Text className="text-xl font-bold text-black">Login</Text>
+              {loading ? (
+                <Text className="text-xl font-bold text-black">Loading...</Text>
+              ) : (
+                <Text className="text-xl font-bold text-black">Login</Text>
+              )}
             </Pressable>
             <Pressable
               onPress={triggerLocalBiometrics}

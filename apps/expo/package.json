@@ -16,6 +16,8 @@
   "dependencies": {
     "@better-auth/expo": "1.6.23",
     "@expo/metro-runtime": "^57.0.6",
+    "@expo/ui": "~57.0.7",
+    "@kando/db": "workspace:*",
     "@legendapp/list": "^2.0.19",
     "@react-native-vector-icons/common": "^13.0.1",
     "@react-native-vector-icons/lucide": "^13.1.2",
