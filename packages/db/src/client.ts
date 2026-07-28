@@ -8,6 +8,7 @@ import { relations } from "./schema/relations"
 const client = postgres(env.DATABASE_URL, {
   prepare: false,
   ssl: {
+    // necessary to ignore self-signed certificates or certs not trusted
     rejectUnauthorized: false,
   },
 })
