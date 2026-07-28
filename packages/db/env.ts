@@ -6,6 +6,7 @@ export function dbEnv() {
     server: {
       DATABASE_URL: z.url().min(1),
       DATABASE_SCHEMA: z.string().min(1),
+      DATABASE_SSL: z.enum(["prefer", "require"]).optional(),
       NODE_ENV: z.enum(["development", "production"]).optional(),
     },
     runtimeEnv: process.env,
