@@ -1,12 +1,5 @@
 import { authClient } from "@/utils/auth"
-import {
-  Button,
-  Form,
-  Host,
-  Section,
-  TextField,
-  Toggle,
-} from "@expo/ui/swift-ui"
+import { Button, Form, Host, Section, Toggle } from "@expo/ui/swift-ui"
 import { useState } from "react"
 
 export default function SettingsScreen() {
@@ -20,11 +13,6 @@ export default function SettingsScreen() {
   return (
     <Host style={{ flex: 1 }}>
       <Form>
-        <Section title="Profile">
-          <TextField placeholder="Name" />
-          <TextField placeholder="Email" />
-        </Section>
-
         <Section title="Preferences">
           <Toggle
             label="Enable notifications"
@@ -39,7 +27,11 @@ export default function SettingsScreen() {
         </Section>
 
         <Section>
-          <Button label="Save Changes" onPress={() => console.log("Saved!")} />
+          <Button
+            label="Sign out"
+            systemImage="iphone.and.arrow.forward.outward"
+            onPress={handleSignOut}
+          />
         </Section>
       </Form>
     </Host>
