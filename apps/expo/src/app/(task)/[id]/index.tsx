@@ -4,9 +4,11 @@ import {
   Divider,
   Form,
   Host,
+  HStack,
   Label,
   Picker,
   Section,
+  Spacer,
   Text,
   TextField,
   Toggle,
@@ -17,22 +19,22 @@ import {
   fixedSize,
   foregroundStyle,
   lineLimit,
+  onTapGesture,
   tag,
 } from "@expo/ui/swift-ui/modifiers"
 import type { TaskPriorityEnumType, TaskStatusEnumType } from "@kando/db/enums"
 import { TaskPriorityEnumValues, TaskStatusEnumValues } from "@kando/db/enums"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { useLocalSearchParams } from "expo-router"
+import { useLocalSearchParams, useRouter } from "expo-router"
 import { useEffect, useState } from "react"
 
 export default function TaskDetailsSheet() {
   const { id } = useLocalSearchParams()
+  const router = useRouter()
 
   const readTaskById = useQuery(
     trpc.tasks.readById.queryOptions({ id: id as string }, { enabled: !!id })
   )
-
-  const tags = useQuery(trpc.tags.readAll.queryOptions())
 
   const title = useNativeState("")
   const description = useNativeState("")
@@ -250,6 +252,30 @@ export default function TaskDetailsSheet() {
               }}
             />
           )}
+        </Section>
+
+        <Section>
+          <HStack
+            modifiers={[
+              onTapGesture(() => router.navigate("(task)/[id]/tags")),
+            ]}
+          >
+            <Label title="Tags" systemImage="tag" />
+            <Spacer />
+            <Text>{readTaskById.data?.taskTags.length ?? 0}</Text>
+          </HStack>
+
+          <HStack>
+            <Label title="Checklist" systemImage="checklist" />
+            <Spacer />
+            <Text>{readTaskById.data?.checklistItems.length ?? 0}</Text>
+          </HStack>
+
+          <HStack>
+            <Label title="Comments" systemImage="text.bubble" />
+            <Spacer />
+            <Text>{readTaskById.data?.comments.length ?? 0}</Text>
+          </HStack>
         </Section>
       </Form>
     </Host>

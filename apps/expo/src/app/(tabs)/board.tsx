@@ -25,7 +25,7 @@ export default function BoardScreen() {
         </ScrollView>
       </View>
       <Link href={"/(task)/new-task-sheet"} asChild>
-        <Pressable className="absolute right-4 bottom-60 flex size-16 items-center justify-center rounded-full bg-black">
+        <Pressable className="absolute right-4 bottom-20 flex size-16 items-center justify-center rounded-full bg-black">
           <Lucide name="plus" size={42} color="white" />
         </Pressable>
       </Link>

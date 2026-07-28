@@ -86,6 +86,10 @@ const MainLayout = () => {
               },
             }}
           />
+          <Stack.Screen
+            name="(task)/[id]/tags"
+            options={{ presentation: "formSheet" }}
+          />
         </Stack>
         <Toaster />
       </QueryClientProvider>
