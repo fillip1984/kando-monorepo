@@ -3,6 +3,7 @@ const path = require("node:path")
 const { getDefaultConfig } = require("expo/metro-config")
 const { FileStore } = require("metro-cache")
 const { withUniwindConfig } = require("uniwind/metro")
+
 const config = getDefaultConfig(__dirname)
 
 config.cacheStores = [

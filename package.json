@@ -10,6 +10,7 @@
     "android": "expo run:android",
     "auth:generate": "pnpm -F @kando/auth generate",
     "build": "pnpm -r build",
+    "build:expo": "pnpm -F @kando/expo build:interactive",
     "clean": "git clean -xdf node_modules",
     "clean:workspaces": "pnpm -r clean",
     "db:push": "pnpm -F @kando/db push",
@@ -25,8 +26,7 @@
     "prod:db:push": "pnpm -F @kando/db push:prod",
     "prod:deploy": "pnpm dotenv -e .env.prod -- sst deploy --stage prod",
     "prod:nuke": "pnpm dotenv -e .env.prod -- sst remove --stage prod",
-    "typecheck": "pnpm -r typecheck",
-    "ui-add": "pnpm -r ui-add"
+    "typecheck": "pnpm -r typecheck"
   },
   "devDependencies": {
     "@kando/prettier-config": "workspace:*",
