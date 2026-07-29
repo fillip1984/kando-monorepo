@@ -2,11 +2,12 @@ import type { ConfigContext, ExpoConfig } from "expo/config"
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
-  name: "expo",
-  slug: "expo",
+  name: "kando",
+  slug: "kando",
   scheme: "expo",
   version: "0.1.0",
   orientation: "portrait",
+  owner: "fillip1984",
   icon: "./assets/icon-light.png",
   userInterfaceStyle: "automatic",
   updates: {
@@ -14,7 +15,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   },
   assetBundlePatterns: ["**/*"],
   ios: {
-    bundleIdentifier: "your.bundle.identifier",
+    bundleIdentifier: "com.illizen.kando",
     supportsTablet: true,
     icon: {
       light: "./assets/icon-light.png",
@@ -22,21 +23,19 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     },
   },
   android: {
-    package: "your.bundle.identifier",
+    package: "com.illizen.kando",
     adaptiveIcon: {
       foregroundImage: "./assets/icon-light.png",
       backgroundColor: "#1F104A",
     },
   },
-  // extra: {
-  //   eas: {
-  //     projectId: "your-eas-project-id",
-  //   },
-  // },
+  extra: {
+    eas: {
+      projectId: "b3c31a4c-fd20-447c-acf6-1ba0c58eb339",
+    },
+  },
   experiments: {
-    // tsconfigPaths: true,
     typedRoutes: true,
-    // reactCanary: true,
     reactCompiler: true,
   },
   plugins: [

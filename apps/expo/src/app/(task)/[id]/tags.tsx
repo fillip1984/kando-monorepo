@@ -1,7 +1,7 @@
 import { trpc } from "@/utils/api"
 import { Host, List } from "@expo/ui/swift-ui"
 import { useQuery } from "@tanstack/react-query"
-import React from "react"
+
 import { Text } from "react-native"
 
 export default function Tags() {

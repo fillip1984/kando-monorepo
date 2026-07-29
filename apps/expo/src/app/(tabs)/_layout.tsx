@@ -1,16 +1,15 @@
-import { authClient } from "@/utils/auth"
 import { focusManager, onlineManager } from "@tanstack/react-query"
 import * as Network from "expo-network"
 import { NativeTabs } from "expo-router/build/native-tabs"
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import type { AppStateStatus } from "react-native"
-import { AppState, Platform, useColorScheme } from "react-native"
+import { AppState, Platform } from "react-native"
 // import "../styles.css"
 
 // This is the main layout of the app
 // It wraps your pages with the providers they need
 export default function RootLayout() {
-  const colorScheme = useColorScheme()
+  // const colorScheme = useColorScheme()
 
   // refetch when network connection is restored
   onlineManager.setEventListener((setOnline) => {
@@ -32,12 +31,12 @@ export default function RootLayout() {
   }, [])
 
   //auth
-  const { data: session } = authClient.useSession()
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setIsLoggedIn(!!session?.user)
-  }, [session])
+  // const { data: session } = authClient.useSession()
+  // const [isLoggedIn, setIsLoggedIn] = useState(false)
+  // useEffect(() => {
+  //   // eslint-disable-next-line react-hooks/set-state-in-effect
+  //   setIsLoggedIn(!!session?.user)
+  // }, [session])
 
   return (
     <NativeTabs minimizeBehavior="onScrollDown">

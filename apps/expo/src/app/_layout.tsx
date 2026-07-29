@@ -22,7 +22,7 @@ export default function RootLayout() {
         (await LocalAuthentication.isEnrolledAsync())
       setBiometricsAvailable(canUseBiometrics)
     }
-    checkBiometrics()
+    void checkBiometrics()
   }, [])
 
   useEffect(() => {
@@ -40,7 +40,7 @@ export default function RootLayout() {
         // router.replace("/login")
       }
     }
-    checkAppAccess()
+    void checkAppAccess()
   }, [])
 
   const { data: session } = authClient.useSession()

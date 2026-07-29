@@ -52,12 +52,14 @@ export default function TaskDetailsSheet() {
     if (readTaskById.data) {
       title.set(readTaskById.data.title)
       description.set(readTaskById.data.description ?? "")
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setStatus(readTaskById.data.status)
       setIsDueDateOpen(!!readTaskById.data.dueDate)
       setDueDate(readTaskById.data.dueDate ?? "")
       setPriority(readTaskById.data.priority ?? null)
       setPosition(readTaskById.data.position ?? 9999)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [readTaskById.data])
 
   const queryClient = useQueryClient()
@@ -109,7 +111,7 @@ export default function TaskDetailsSheet() {
                   description: description.get(),
                   status,
                   dueDate,
-                  priority,
+                  priority: priority === "None" ? null : priority,
                   position,
                 },
               })
@@ -118,7 +120,7 @@ export default function TaskDetailsSheet() {
           <TextField
             placeholder="Task description..."
             axis="vertical"
-            text={description ?? ""}
+            text={description}
             onFocusChange={() => {
               void handleSubmit({
                 updates: {
@@ -126,7 +128,7 @@ export default function TaskDetailsSheet() {
                   description: description.get(),
                   status,
                   dueDate,
-                  priority,
+                  priority: priority === "None" ? null : priority,
                   position,
                 },
               })
@@ -159,7 +161,7 @@ export default function TaskDetailsSheet() {
                   description: description.get(),
                   status: selection,
                   dueDate,
-                  priority,
+                  priority: priority === "None" ? null : priority,
                   position,
                 },
               })
@@ -192,7 +194,6 @@ export default function TaskDetailsSheet() {
                   description: description.get(),
                   status,
                   dueDate,
-
                   priority: selection === "None" ? null : selection,
                   position,
                 },
@@ -224,7 +225,7 @@ export default function TaskDetailsSheet() {
                     description: description.get(),
                     status,
                     dueDate: "",
-                    priority,
+                    priority: priority === "None" ? null : priority,
                     position,
                   },
                 })
@@ -245,7 +246,7 @@ export default function TaskDetailsSheet() {
                     description: description.get(),
                     status,
                     dueDate: date.toDateString(),
-                    priority,
+                    priority: priority === "None" ? null : priority,
                     position,
                   },
                 })
@@ -257,7 +258,7 @@ export default function TaskDetailsSheet() {
         <Section>
           <HStack
             modifiers={[
-              onTapGesture(() => router.navigate("(task)/[id]/tags")),
+              onTapGesture(() => router.navigate("/(task)/[id]/tags")),
             ]}
           >
             <Label title="Tags" systemImage="tag" />
