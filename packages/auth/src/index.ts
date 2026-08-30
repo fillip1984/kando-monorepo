@@ -40,9 +40,10 @@ export function initAuth<
         clientId: options.googleClientId,
         clientSecret: options.googleClientSecret,
         disableImplicitSignUp: options.disableSignUps,
+        redirectURI: `${options.baseUrl}/api/auth/callback/google`,
       },
     },
-    trustedOrigins: ["expo://"],
+    trustedOrigins: ["kando://", "expo://"],
     onAPIError: {
       onError(error, ctx) {
         console.error("BETTER AUTH API ERROR", error, ctx)
