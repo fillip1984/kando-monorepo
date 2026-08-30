@@ -33,8 +33,7 @@ const debugCallbackPlugin: BetterAuthPlugin = {
         // eslint-disable-next-line @typescript-eslint/require-await
         handler: createAuthMiddleware(async (ctx) => {
           const authorizationURL = ctx.query?.authorizationURL as
-            | string
-            | undefined
+            string | undefined
           console.log("[auth-debug] expo-authorization-proxy request", {
             oauthState: ctx.query?.oauthState as string | undefined,
             authorizationURL,
