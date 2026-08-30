@@ -13,14 +13,15 @@
     "clean": "git clean -xdf .cache dist node_modules",
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint --flag unstable_native_nodejs_ts_config",
-    "generate": "dotenv -e ../../.env -- pnpx @better-auth/cli generate --config script/auth-cli.ts --output ../db/src/auth-schema.ts",
+    "generate": "dotenv -e ../../.env -- pnpm dlx auth@latest generate --config script/auth-cli.ts --output ../db/src/auth-schema-v2.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@better-auth/expo": "1.6.23",
+    "@better-auth/drizzle-adapter": "^1.7.2",
+    "@better-auth/expo": "1.7.2",
     "@kando/db": "workspace:*",
     "@t3-oss/env-core": "^0.13.11",
-    "better-auth": "1.6.23",
+    "better-auth": "1.7.2",
     "zod": "^4.4.3"
   },
   "devDependencies": {
@@ -28,9 +29,9 @@
     "@kando/eslint-config": "workspace:*",
     "@kando/prettier-config": "workspace:*",
     "@kando/tsconfig": "workspace:*",
-    "@types/node": "26.1.1",
+    "@types/node": "26.4.0",
     "eslint": "^9.39.5",
-    "prettier": "^3.9.5",
+    "prettier": "^3.9.6",
     "typescript": "^5.9.3"
   },
   "prettier": "@kando/prettier-config"

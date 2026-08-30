@@ -22,16 +22,16 @@
     "@kando/db": "workspace:*",
     "@kenjiuno/msgreader-web-ng": "0.2.0-alpha1",
     "@trpc/server": "^11.18.0",
-    "superjson": "2.2.3",
+    "superjson": "2.2.6",
     "zod": "^4.4.3"
   },
   "devDependencies": {
     "@kando/eslint-config": "workspace:*",
     "@kando/prettier-config": "workspace:*",
     "@kando/tsconfig": "workspace:*",
-    "@types/node": "26.1.1",
+    "@types/node": "26.4.0",
     "eslint": "^9.39.5",
-    "prettier": "^3.9.5",
+    "prettier": "^3.9.6",
     "typescript": "^5.9.3"
   },
   "prettier": "@kando/prettier-config"

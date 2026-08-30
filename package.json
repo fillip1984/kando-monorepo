@@ -24,6 +24,7 @@
     "lint": "pnpm -r lint --continue -- --cache --cache-location .cache/.eslintcache",
     "lint:fix": "pnpm -r lint --continue -- --fix --cache --cache-location .cache/.eslintcache",
     "lint:ws": "pnpm dlx sherif@latest",
+    "update:workspaces": "pnpm -r update --latest",
     "prod:db:push": "pnpm -F @kando/db push:prod",
     "prod:deploy": "pnpm dotenv -e .env.prod -- sst deploy --stage prod",
     "prod:nuke": "pnpm dotenv -e .env.prod -- sst remove --stage prod",
@@ -33,7 +34,7 @@
     "@kando/prettier-config": "workspace:*",
     "@types/aws-lambda": "8.10.162",
     "dotenv-cli": "^11.0.0",
-    "prettier": "^3.9.5",
+    "prettier": "^3.9.6",
     "typescript": "^5.9.3"
   },
   "prettier": "@kando/prettier-config",
