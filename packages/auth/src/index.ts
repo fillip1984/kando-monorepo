@@ -27,6 +27,23 @@ const debugCallbackPlugin: BetterAuthPlugin = {
           })
         }),
       },
+      {
+        matcher: (ctx) =>
+          ctx.path?.startsWith("/expo-authorization-proxy") ?? false,
+        // eslint-disable-next-line @typescript-eslint/require-await
+        handler: createAuthMiddleware(async (ctx) => {
+          const authorizationURL = ctx.query?.authorizationURL as
+            | string
+            | undefined
+          console.log("[auth-debug] expo-authorization-proxy request", {
+            oauthState: ctx.query?.oauthState as string | undefined,
+            authorizationURL,
+            hasState: authorizationURL
+              ? new URL(authorizationURL).searchParams.has("state")
+              : null,
+          })
+        }),
+      },
     ],
     after: [
       {
