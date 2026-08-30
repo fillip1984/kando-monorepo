@@ -1,5 +1,6 @@
 import { authRouter } from "./router/auth"
 import { emailRouter } from "./router/email"
+import { healthRouter } from "./router/health"
 import { settingsRouter } from "./router/settings"
 import { tagRouter } from "./router/tag"
 import { taskRouter } from "./router/task"
@@ -11,6 +12,7 @@ export const appRouter = createTRPCRouter({
   settings: settingsRouter,
   tags: tagRouter,
   tasks: taskRouter,
+  health: healthRouter,
 })
 
 // export type definition of API
