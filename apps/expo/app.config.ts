@@ -8,7 +8,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   version: "0.1.0",
   orientation: "portrait",
   owner: "fillip1984",
-  icon: "./assets/icon-light.png",
+  icon: "./assets/kando-logo.png",
   userInterfaceStyle: "automatic",
   updates: {
     fallbackToCacheTimeout: 0,
@@ -18,14 +18,14 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     bundleIdentifier: "com.illizen.kando",
     supportsTablet: true,
     icon: {
-      light: "./assets/icon-light.png",
-      dark: "./assets/icon-dark.png",
+      light: "./assets/kando-logo.png",
+      dark: "./assets/kando-logo.png",
     },
   },
   android: {
     package: "com.illizen.kando",
     adaptiveIcon: {
-      foregroundImage: "./assets/icon-light.png",
+      foregroundImage: "./assets/kando-logo.png",
       backgroundColor: "#1F104A",
     },
   },
@@ -53,10 +53,10 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       "expo-splash-screen",
       {
         backgroundColor: "#E4E4E7",
-        image: "./assets/icon-light.png",
+        image: "./assets/kando-logo.png",
         dark: {
           backgroundColor: "#18181B",
-          image: "./assets/icon-dark.png",
+          image: "./assets/kando-logo.png",
         },
       },
     ],
