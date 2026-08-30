@@ -8,6 +8,7 @@ import type { AppRouter } from "@kando/api"
 import { appRouter, createTRPCContext } from "@kando/api"
 
 import { auth } from "@/auth/server"
+import type { Auth } from "@kando/auth"
 import { createQueryClient } from "./query-client"
 
 /**
@@ -20,7 +21,7 @@ const createContext = cache(async () => {
 
   return createTRPCContext({
     headers: heads,
-    auth,
+    auth: auth as Auth,
   })
 })
 

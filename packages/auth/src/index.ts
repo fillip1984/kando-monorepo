@@ -20,10 +20,6 @@ export function initAuth<
   googleClientSecret: string
   extraPlugins?: TExtraPlugins
 }) {
-  console.log({
-    baseUrl: options.baseUrl,
-    productionUrl: options.productionUrl,
-  })
   const config = {
     database: drizzleAdapter(db, {
       provider: "pg",
@@ -37,7 +33,7 @@ export function initAuth<
         productionURL: options.productionUrl,
       }),
       expo(),
-      // ...(options.extraPlugins ?? []),
+      ...(options.extraPlugins ?? []),
     ],
     socialProviders: {
       google: {

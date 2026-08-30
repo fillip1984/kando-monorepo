@@ -30,4 +30,7 @@ export const getBaseUrl = () => {
     ? "https://kando.illizen.com"
     : "http://localhost:3000"
   return baseUrl
+
+  // console.log("Hardcoding to https://kando.illizen.com for now...")
+  // return "https://kando.illizen.com"
 }
