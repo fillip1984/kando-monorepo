@@ -35,6 +35,7 @@ const debugCallbackPlugin: BetterAuthPlugin = {
           const authorizationURL = ctx.query?.authorizationURL as
             string | undefined
           console.log("[auth-debug] expo-authorization-proxy request", {
+            rawRequestUrl: ctx.request?.url,
             oauthState: ctx.query?.oauthState as string | undefined,
             authorizationURL,
             hasState: authorizationURL
