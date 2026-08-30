@@ -17,7 +17,7 @@ jobs:
         uses: pnpm/action-setup@v6
 
       - name: Install dependencies
-        run: pnpm install --config.minimum-release-age=4320
+        run: pnpm install
 
       - name: Build and Deploy
         env:
