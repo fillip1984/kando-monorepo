@@ -6,7 +6,6 @@ import { triggerLocalBiometrics } from "@/utils/biometric-utils"
 import { colors } from "@/utils/color-utils"
 import { Lucide } from "@react-native-vector-icons/lucide"
 import { QueryClientProvider } from "@tanstack/react-query"
-import * as LocalAuthentication from "expo-local-authentication"
 import { Stack } from "expo-router"
 import { useEffect, useState } from "react"
 import { Pressable, Text, View } from "react-native"
@@ -15,42 +14,42 @@ import { SafeAreaView } from "react-native-safe-area-context"
 import { toast, Toaster } from "sonner-native"
 
 export default function RootLayout() {
-  const [biometricsAvailable, setBiometricsAvailable] = useState(false)
-  useEffect(() => {
-    const checkBiometrics = async () => {
-      const canUseBiometrics =
-        (await LocalAuthentication.hasHardwareAsync()) &&
-        (await LocalAuthentication.isEnrolledAsync())
-      setBiometricsAvailable(canUseBiometrics)
-    }
-    void checkBiometrics()
-  }, [])
+  // const [biometricsAvailable, setBiometricsAvailable] = useState(false)
+  // useEffect(() => {
+  //   const checkBiometrics = async () => {
+  //     const canUseBiometrics =
+  //       (await LocalAuthentication.hasHardwareAsync()) &&
+  //       (await LocalAuthentication.isEnrolledAsync())
+  //     setBiometricsAvailable(canUseBiometrics)
+  //   }
+  //   void checkBiometrics()
+  // }, [])
 
-  useEffect(() => {
-    const checkAppAccess = async () => {
-      // Better Auth checks if a session token natively exists in Expo SecureStore
-      const { data: session } = await authClient.getSession()
+  // useEffect(() => {
+  //   const checkAppAccess = async () => {
+  //     // Better Auth checks if a session token natively exists in Expo SecureStore
+  //     const { data: session } = await authClient.getSession()
 
-      if (session) {
-        // User is logged into Better Auth server, but we gate the UI with local biometrics
-        const localized = await triggerLocalBiometrics()
-        if (localized) {
-          console.log("User authenticated with biometrics, proceeding to app")
-        }
-      } else {
-        // No active server session found; push to primary authentication screen
-        // router.replace("/login")
-      }
-    }
-    void checkAppAccess()
-  }, [])
+  //     if (session) {
+  //       // User is logged into Better Auth server, but we gate the UI with local biometrics
+  //       const localized = await triggerLocalBiometrics()
+  //       if (localized) {
+  //         console.log("User authenticated with biometrics, proceeding to app")
+  //       }
+  //     } else {
+  //       // No active server session found; push to primary authentication screen
+  //       // router.replace("/login")
+  //     }
+  //   }
+  //   void checkAppAccess()
+  // }, [])
 
   const { data: session } = authClient.useSession()
   if (session) {
     return <MainLayout />
   }
 
-  return <Login biometricsAvailable={biometricsAvailable} />
+  return <Login biometricsAvailable={false} />
 }
 
 const MainLayout = () => {
@@ -141,7 +140,7 @@ const Login = ({ biometricsAvailable }: { biometricsAvailable: boolean }) => {
       })
     } catch (e) {
       console.error(e)
-      toast.error("Unknown error")
+      toast.error(`Unknown error: ${e as Error}. Please try again.`)
     } finally {
       setLoading(false)
     }
