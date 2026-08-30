@@ -19,16 +19,6 @@ jobs:
           cache: true
           run_install: true
 
-      - name: Cache SST Providers
-        uses: actions/cache@v6
-        with:
-          path: |
-            .sst
-            ~/.pulumi/bin
-          key: ${{ runner.os }}-sst-${{ hashFiles('sst.config.ts') }}
-          restore-keys: |
-            ${{ runner.os }}-sst-
-
       - name: Build and Deploy
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
