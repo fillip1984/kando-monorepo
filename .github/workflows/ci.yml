@@ -32,4 +32,4 @@ jobs:
           PRODUCTION_URL: "https://kando.illizen.com"
         run: |
           pnpm run build:packages
-          pnpm sst deploy --stage prod --print-logs
+          pnpm sst deploy --stage prod
