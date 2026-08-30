@@ -26,7 +26,7 @@ export const emailRouter = createTRPCRouter({
         //     ansiEncoding: ansiEncoding,
         //     includeRawProps: includeRawProps,
         //   }
-        // TODO: interesting dump of other data that may be useful
+        // interesting dump of other data that may be useful
         //   const testMsgInfo = msgReader.getFileData()
         //   console.log("testMsgInfo", testMsgInfo)
         const msgInfo = msgReader.getFileData()

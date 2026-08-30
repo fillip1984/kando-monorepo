@@ -24,7 +24,7 @@ export const getBaseUrl = () => {
   // }
   // return `http://${localhost}:3000`
 
-  // TODO: we could grab the ip address of the debuggerHost but better-auth doesn't play nicely with it...
+  // We could grab the ip address of the debuggerHost but better-auth doesn't play nicely with it...
   // or google doesn't like that we're using a url that doesn't match a registered oauth redirect url
   const baseUrl = !localhost
     ? "https://kando.illizen.com"

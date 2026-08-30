@@ -9,7 +9,7 @@ import { Button } from "../ui/button"
 
 export const containerVariants = cva("flex grow overflow-y-auto")
 
-// TODO: might want to add variants like container size... see shadcn's button.tsx for reference
+// might want to add variants like container size... see shadcn's button.tsx for reference
 export default function Container({
   className,
   children,
