@@ -1,11 +1,7 @@
 {
   "name": "kando-monorepo",
   "private": true,
-  "engines": {
-    "node": "^24.12.0",
-    "pnpm": "^10.19.0"
-  },
-  "packageManager": "pnpm@10.19.0",
+  "packageManager": "pnpm@11.24.0",
   "scripts": {
     "android": "expo run:android",
     "auth:generate": "pnpm -F @kando/auth generate",
