@@ -4,7 +4,6 @@ import type { NextRequest } from "next/server"
 import { appRouter, createTRPCContext } from "@kando/api"
 
 import { auth } from "@/auth/server"
-import type { Auth } from "@kando/auth"
 
 /**
  * Configure basic CORS headers
@@ -32,7 +31,7 @@ const handler = async (req: NextRequest) => {
     req,
     createContext: () =>
       createTRPCContext({
-        auth: auth as Auth,
+        auth: auth,
         headers: req.headers,
       }),
     onError({ error, path }) {

@@ -23,11 +23,6 @@ export function initAuth<
   console.log({
     baseUrl: options.baseUrl,
     productionUrl: options.productionUrl,
-    secret: options.secret,
-    disableSignUps: options.disableSignUps,
-    googleClientId: options.googleClientId,
-    googleClientSecret: options.googleClientSecret,
-    extraPlugins: options.extraPlugins,
   })
   const config = {
     database: drizzleAdapter(db, {
