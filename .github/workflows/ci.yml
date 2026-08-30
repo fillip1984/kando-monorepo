@@ -17,7 +17,8 @@ jobs:
         uses: actions/cache@v6
         with:
           path: |
-            .sst
+            ~/.sst/plugins
+            ~/.pulumi/plugins
           key: ${{ runner.os }}-sst-${{ hashFiles('**/pnpm-lock.yaml', 'sst.config.ts') }}
           restore-keys: |
             ${{ runner.os }}-sst-
