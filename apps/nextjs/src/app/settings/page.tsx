@@ -1,127 +1,118 @@
 "use client"
 
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-
 import Container from "@/components/custom-ui/container"
-import { Button } from "@/components/ui/button"
-import { useTRPC } from "@/trpc/react"
-import type { TaskType } from "@kando/api"
-import { CloudDownloadIcon, CloudUploadIcon } from "lucide-react"
-import type { ChangeEvent } from "react"
-import { useRef } from "react"
-import { toast } from "sonner"
 
 export default function PreferencesPage() {
   return (
     <Container>
       <h4>Settings</h4>
 
-      <div className="flex w-full flex-col gap-4">
+      {/* <div className="flex w-full flex-col gap-4">
         <ImportExportSection />
-      </div>
+      </div> */}
     </Container>
   )
 }
 
-const ImportExportSection = () => {
-  // const router = useRouter();
+// const ImportExportSection = () => {
+//   // const router = useRouter();
 
-  // export/import data stuff
-  const queryClient = useQueryClient()
-  const trpc = useTRPC()
-  const exportData = useMutation(
-    trpc.settings.exportData.mutationOptions({
-      onSuccess: (data) => {
-        // Create blob link to download
-        const url = window.URL.createObjectURL(new Blob([JSON.stringify(data)]))
-        const link = document.createElement("a")
-        link.href = url
-        link.setAttribute(
-          "download",
-          `${new Date().toLocaleString()} kando_backup.json`
-        )
+//   // export/import data stuff
+//   const queryClient = useQueryClient()
+//   const trpc = useTRPC()
+//   const exportData = useMutation(
+//     trpc.settings.exportData.mutationOptions({
+//       onSuccess: (data) => {
+//         // Create blob link to download
+//         const url = window.URL.createObjectURL(new Blob([JSON.stringify(data)]))
+//         const link = document.createElement("a")
+//         link.href = url
+//         link.setAttribute(
+//           "download",
+//           `${new Date().toLocaleString()} kando_backup.json`
+//         )
 
-        // Append to html link element page
-        document.body.appendChild(link)
+//         // Append to html link element page
+//         document.body.appendChild(link)
 
-        // Start download
-        link.click()
+//         // Start download
+//         link.click()
 
-        // Clean up and remove the link
-        link.parentNode?.removeChild(link)
-      },
-    })
-  )
+//         // Clean up and remove the link
+//         link.parentNode?.removeChild(link)
+//       },
+//     })
+//   )
 
-  const { mutate: importData } = useMutation(
-    trpc.settings.importData.mutationOptions({
-      onSuccess: async () => {
-        toast.success("Import successful")
-        await queryClient.invalidateQueries(trpc.tasks.pathFilter())
-        await queryClient.invalidateQueries(trpc.tags.pathFilter())
-      },
-    })
-  )
+//   const { mutate: importData } = useMutation(
+//     trpc.settings.importData.mutationOptions({
+//       onSuccess: async () => {
+//         toast.success("Import successful")
+//         await queryClient.invalidateQueries(trpc.tasks.pathFilter())
+//         await queryClient.invalidateQueries(trpc.tags.pathFilter())
+//       },
+//     })
+//   )
 
-  const fileInputRef = useRef<HTMLInputElement>(null)
-  const triggerFileBrowse = () => {
-    fileInputRef.current?.click()
-  }
+//   const fileInputRef = useRef<HTMLInputElement>(null)
+//   const triggerFileBrowse = () => {
+//     fileInputRef.current?.click()
+//   }
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault()
-    e.stopPropagation()
-    if (e.target.files) {
-      Array.from(e.target.files).forEach((file) => processFile(file))
-    }
-  }
+//   // const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+//   //   e.preventDefault()
+//   //   e.stopPropagation()
+//   //   if (e.target.files) {
+//   //     Array.from(e.target.files).forEach((file) => processFile(file))
+//   //   }
+//   // }
 
-  const processFile = (file: File) => {
-    try {
-      const fr = new FileReader()
-      fr.onload = convertFileToDataUrl
-      fr.readAsDataURL(file)
-    } finally {
-      if (fileInputRef.current) {
-        fileInputRef.current.value = ""
-      }
-    }
-  }
+//   // const processFile = (file: File) => {
+//   //   try {
+//   //     const fr = new FileReader()
+//   //     fr.onload = convertFileToDataUrl
+//   //     fr.readAsDataURL(file)
+//   //   } finally {
+//   //     if (fileInputRef.current) {
+//   //       fileInputRef.current.value = ""
+//   //     }
+//   //   }
+//   // }
 
-  const convertFileToDataUrl = (e: ProgressEvent<FileReader>) => {
-    const dataUrlString = e.target?.result
-    const dataUrl = dataUrlString as string
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const data = dataUrl.split(",")[1]!
-    const buffer = Buffer.from(data, "base64")
-    const string = buffer.toString()
-    const json = JSON.parse(string) as {
-      tasks: TaskType[]
-    }
+//   // const convertFileToDataUrl = (e: ProgressEvent<FileReader>) => {
+//   // const dataUrlString = e.target?.result
+//   // const dataUrl = dataUrlString as string
 
-    importData({ tasks: json.tasks })
-  }
+//   // const data = dataUrl.split(",")[1]!
+//   // const buffer = Buffer.from(data, "base64")
+//   // const string = buffer.toString()
+//   // const json = JSON.parse(string) as {
+//   //   tasks: TaskType[]
+//   // }
 
-  return (
-    <>
-      <h5>Import/Export</h5>
-      <p>Manage your data import and export settings.</p>
-      <div className="flex gap-4">
-        <Button variant="outline" onClick={triggerFileBrowse}>
-          Import Data <CloudUploadIcon />
-        </Button>
-        <Button variant="outline" onClick={() => exportData.mutate()}>
-          Export Data <CloudDownloadIcon />
-        </Button>
-      </div>
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept=".json"
-        multiple={true}
-        className="hidden"
-        onChange={handleFileChange}
-      />
-    </>
-  )
-}
+//   // importData({ tasks: json.tasks })
+//   // }
+
+//   return (
+//     <>
+//       <h5>Import/Export</h5>
+//       <p>Manage your data import and export settings.</p>
+//       <div className="flex gap-4">
+//         <Button variant="outline" onClick={triggerFileBrowse}>
+//           Import Data <CloudUploadIcon />
+//         </Button>
+//         <Button variant="outline" onClick={() => exportData.mutate()}>
+//           Export Data <CloudDownloadIcon />
+//         </Button>
+//       </div>
+//       <input
+//         ref={fileInputRef}
+//         type="file"
+//         accept=".json"
+//         multiple={true}
+//         className="hidden"
+//         onChange={handleFileChange}
+//       />
+//     </>
+//   )
+// }

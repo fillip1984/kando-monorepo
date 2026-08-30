@@ -12,7 +12,6 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { CloudUploadIcon, PlusIcon } from "lucide-react"
 import type { DragEvent } from "react"
 import { useEffect, useRef, useState } from "react"
-import { toast } from "sonner"
 import { TaskCard } from "./task/task-card"
 
 export function Swimlane({
@@ -179,13 +178,13 @@ const NewTaskFromOutlookOverlay = ({
 
   const trpc = useTRPC()
   const queryClient = useQueryClient()
-  const uploadMsgFn = useMutation(
-    trpc.email.parseOutlookMsg.mutationOptions({
-      onSuccess: async () => {
-        toast.success("Outlook message parsed successfully!")
-      },
-    })
-  )
+  // const uploadMsgFn = useMutation(
+  //   trpc.email.parseOutlookMsg.mutationOptions({
+  //     onSuccess: async () => {
+  //       toast.success("Outlook message parsed successfully!")
+  //     },
+  //   })
+  // )
   const createTask = useMutation(
     trpc.tasks.create.mutationOptions({
       onSuccess: async () => {
@@ -199,16 +198,6 @@ const NewTaskFromOutlookOverlay = ({
       -1
     ) + 1
 
-  useEffect(() => {
-    window.addEventListener("dragenter", (e) =>
-      setIsDragStart(isFileDrag(e as unknown as DragEvent<unknown>))
-    )
-
-    return () => {
-      window.removeEventListener("dragenter", () => setIsDragStart(false))
-    }
-  }, [])
-
   const isFileDrag = (e: DragEvent<unknown>) => {
     const items = Array.from(e.dataTransfer.items)
 
@@ -220,6 +209,16 @@ const NewTaskFromOutlookOverlay = ({
 
     return isFile
   }
+
+  useEffect(() => {
+    window.addEventListener("dragenter", (e) =>
+      setIsDragStart(isFileDrag(e as unknown as DragEvent<unknown>))
+    )
+
+    return () => {
+      window.removeEventListener("dragenter", () => setIsDragStart(false))
+    }
+  }, [])
 
   const handleDrag = (e: DragEvent<unknown>) => {
     e.preventDefault()

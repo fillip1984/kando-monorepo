@@ -147,11 +147,11 @@ const Footer = () => {
                 >
                   <Avatar className="h-8 w-8 rounded-lg">
                     <AvatarImage
-                      src={session.user?.image ?? undefined}
+                      src={session.user.image ?? undefined}
                       alt={session.user.name}
                     />
                     <AvatarFallback className="rounded-lg">
-                      {session.user.name?.[0]}
+                      {session.user.name[0]}
                     </AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">

@@ -115,10 +115,10 @@ export const settingsRouter = createTRPCRouter({
               userId: ctx.session.user.id,
             })
             .returning({ id: tasks.id })
-          if (insertedTask.length === 0) {
+          if (insertedTask.length === 0 || !insertedTask[0]?.id) {
             throw new Error("Failed to insert task")
           }
-          const insertedTaskId = insertedTask[0]!.id
+          const insertedTaskId = insertedTask[0].id
           // insert checklist items
           for (const checklistItem of task.checklistItems) {
             await tx.insert(checklistItems).values({

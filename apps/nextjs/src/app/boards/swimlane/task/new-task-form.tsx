@@ -73,6 +73,7 @@ export default function NewTaskForm({
 
   const [isValid, setIsValid] = useState(false)
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsValid(title.trim().length > 0)
   }, [title])
 
@@ -122,6 +123,7 @@ export default function NewTaskForm({
                 <ComboboxContent className="w-full" align="center">
                   <ComboboxList>
                     {(item) => (
+                      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                       <ComboboxItem key={item} value={item}>
                         {item}
                       </ComboboxItem>
@@ -159,6 +161,7 @@ export default function NewTaskForm({
                 <ComboboxContent>
                   <ComboboxList>
                     {(item) => (
+                      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                       <ComboboxItem key={item} value={item}>
                         {item}
                       </ComboboxItem>

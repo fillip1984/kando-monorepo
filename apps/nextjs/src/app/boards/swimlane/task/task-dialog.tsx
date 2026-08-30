@@ -74,13 +74,15 @@ export function TaskDialog({
   useEffect(() => {
     // reset form between openings of the dialog
     if (open) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setTitle(task.title)
-      setDescription(task.description || "")
+      setDescription(task.description ?? "")
       setStatus(task.status)
-      setDueDate(task.dueDate || "")
+      setDueDate(task.dueDate ?? "")
       setPriority(task.priority ?? null)
       setPosition(task.position ?? 9999)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open])
 
   const trpc = useTRPC()
@@ -194,7 +196,7 @@ export function TaskDialog({
                 onValueChange={(value) => {
                   const newStatus = value ?? "Todo"
                   setStatus(newStatus)
-                  handleSubmit({
+                  void handleSubmit({
                     updates: {
                       title,
                       description,
@@ -214,6 +216,7 @@ export function TaskDialog({
                 <ComboboxContent className="w-full" align="center">
                   <ComboboxList>
                     {(item) => (
+                      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                       <ComboboxItem key={item} value={item}>
                         {item}
                       </ComboboxItem>
@@ -227,7 +230,7 @@ export function TaskDialog({
                 handleOnChange={(value) => {
                   const newDueDate = value
                   setDueDate(newDueDate)
-                  handleSubmit({
+                  void handleSubmit({
                     updates: {
                       title,
                       description,
@@ -248,7 +251,7 @@ export function TaskDialog({
                 onValueChange={(value) => {
                   const newPriority = value
                   setPriority(newPriority)
-                  handleSubmit({
+                  void handleSubmit({
                     updates: {
                       title,
                       description,
@@ -271,6 +274,7 @@ export function TaskDialog({
                 <ComboboxContent>
                   <ComboboxList>
                     {(item) => (
+                      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                       <ComboboxItem key={item} value={item}>
                         {item}
                       </ComboboxItem>
@@ -326,6 +330,7 @@ const TagsSection = ({ task }: { task: TaskType }) => {
   const [selectedTags, setSelectedTags] = useState<string[]>([])
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setSelectedTags(task.taskTags.map((taskTag) => taskTag.tagId))
   }, [task.id, task.taskTags])
 
@@ -362,7 +367,7 @@ const TagsSection = ({ task }: { task: TaskType }) => {
 
   const lookupTagColor = (tagId: string, tags: TagType[]): string => {
     const tag = tags.find((t) => t.id === tagId)
-    return tag?.color ? tag.color : "transparent"
+    return tag?.color ?? "transparent"
   }
   return (
     <div>
@@ -411,7 +416,7 @@ const TagsSection = ({ task }: { task: TaskType }) => {
                           }}
                         />
                       ) : null}
-                      <span>{tags?.find((t) => t.id === tag)?.name || ""}</span>
+                      <span>{tags?.find((t) => t.id === tag)?.name ?? ""}</span>
                       <Button
                         variant={"ghost"}
                         size={"icon-xs"}
@@ -485,6 +490,7 @@ const ChecklistSection = ({ task }: { task: TaskType }) => {
   >([], {
     dragHandle: ".drag-handle",
     plugins: [animations()],
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     onDragend: async (event) => {
       const dragEvent = event as { values: ChecklistItemType[] }
       const updates = dragEvent.values.map((item, i) => ({
@@ -614,6 +620,7 @@ const CommentsSection = ({ task }: { task: TaskType }) => {
   const [isNewCommentContentValid, setIsNewCommentContentValid] =
     useState(false)
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsNewCommentContentValid(newCommentContent.trim().length > 0)
   }, [newCommentContent])
   const [isDeleteCommentConfirmationOpen, setIsDeleteCommentConfirmationOpen] =

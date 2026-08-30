@@ -9,11 +9,11 @@ export const emailRouter = createTRPCRouter({
         file: z.instanceof(File),
       })
     )
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ input }) => {
       try {
         const file = input.file //.get("file")
 
-        if (file == null || typeof file === "string") {
+        if (typeof file === "string") {
           throw new Error("Expected a .msg file upload in the 'file' field.")
         }
 

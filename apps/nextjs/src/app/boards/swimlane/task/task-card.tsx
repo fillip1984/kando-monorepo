@@ -108,7 +108,7 @@ export function TaskCard({ task }: { task: TaskType }) {
                   style={{ backgroundColor: taskTag.tag.color }}
                 />
               ) : null}
-              <span>{taskTag.tag?.name || "Tag"}</span>
+              <span>{taskTag.tag?.name ?? "Tag"}</span>
             </Badge>
           ))}
           {task.taskTags.length > 2 ? (

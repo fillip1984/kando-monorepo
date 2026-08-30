@@ -31,8 +31,8 @@ export default function DeleteCommentConfirmation({
   const trpc = useTRPC()
   const deleteComment = useMutation(
     trpc.tasks.deleteComment.mutationOptions({
-      onSuccess: () => {
-        queryClient.invalidateQueries(trpc.tasks.pathFilter())
+      onSuccess: async () => {
+        await queryClient.invalidateQueries(trpc.tasks.pathFilter())
         toast.success("Comment deleted")
         close()
       },

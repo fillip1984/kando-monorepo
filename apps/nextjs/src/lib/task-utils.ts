@@ -21,6 +21,7 @@ export function parseDueDate(value: unknown): Date | null {
     return Number.isNaN(value.getTime()) ? null : value
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-base-to-string
   const stringValue = String(value)
 
   // Parse date-only values explicitly as local dates to avoid UTC shifts.

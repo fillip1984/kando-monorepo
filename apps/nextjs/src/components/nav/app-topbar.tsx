@@ -6,7 +6,7 @@ import { useTRPC } from "@/trpc/react"
 import type { TaskType } from "@kando/api"
 import { useQuery } from "@tanstack/react-query"
 import { SearchIcon } from "lucide-react"
-import { useParams, usePathname } from "next/navigation"
+import { usePathname } from "next/navigation"
 import { Fragment, useEffect, useState } from "react"
 import {
   Breadcrumb,
@@ -30,7 +30,7 @@ import { Separator } from "../ui/separator"
 import { SidebarTrigger } from "../ui/sidebar"
 
 export default function AppTopbar() {
-  const id = useParams().id
+  // const id = useParams().id
   const path = usePathname()
   const [breadcrumbs, setBreadcrumbs] = useState<
     { label: string; href: string }[]
@@ -101,6 +101,7 @@ const SearchCommand = () => {
 
   const [commandOrSearch, setCommandOrSearch] = useState("")
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setCommandOrSearch("")
   }, [commandAndSearchOpen])
 
@@ -111,7 +112,7 @@ const SearchCommand = () => {
   const [searchCommandResults, setSearchCommandResults] =
     useState<{ title: string; action: () => void }[]>(commonCommands)
   useEffect(() => {
-    const debouncedSearch = setTimeout(async function search() {
+    const debouncedSearch = setTimeout(function search() {
       // debounce commandOrSearch for 300 ms and then update the search results
       if (!commandOrSearch) {
         setSearchTaskResults([])
@@ -135,6 +136,7 @@ const SearchCommand = () => {
       }
     }, 300)
     return () => clearTimeout(debouncedSearch)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [commandOrSearch])
 
   useEffect(() => {

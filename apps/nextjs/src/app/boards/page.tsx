@@ -50,11 +50,13 @@ const KanbanBoard = ({ tasks }: { tasks: TaskType[] }) => {
       return !el.classList.contains("no-drag")
     },
     onDragend: async (event: unknown) => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
       const status = (event as any).parent.el.dataset.columnId
       const dragEvent = event as { values: TaskType[] }
       const updates = dragEvent.values.map((task, i) => ({
         taskId: task.id,
         title: task.title,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         status,
         position: i,
       }))

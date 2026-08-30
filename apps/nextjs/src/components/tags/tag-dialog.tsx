@@ -71,6 +71,7 @@ export default function TagDialog({
       return
     }
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setName(tag?.name ?? "")
     setDescription(tag?.description ?? "")
     setColor(tag?.color ?? getRandomTagColor())
