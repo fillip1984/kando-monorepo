@@ -1,7 +1,7 @@
+import { drizzleAdapter } from "@better-auth/drizzle-adapter/relations-v2"
 import { expo } from "@better-auth/expo"
 import type { BetterAuthOptions, BetterAuthPlugin } from "better-auth"
 import { betterAuth } from "better-auth"
-import { drizzleAdapter } from "better-auth/adapters/drizzle"
 import { oAuthProxy } from "better-auth/plugins"
 
 import { db } from "@kando/db/client"

@@ -6,8 +6,8 @@ const { withUniwindConfig } = require("uniwind/metro")
 
 const config = getDefaultConfig(__dirname)
 
-// required for better-auth (2025-11-22)
-config.resolver.unstable_enablePackageExports = true
+// required for better-auth (2025-11-22), removed 2026-08-30
+// config.resolver.unstable_enablePackageExports = true
 
 config.cacheStores = [
   new FileStore({

@@ -2,7 +2,7 @@ import type { Config } from "drizzle-kit"
 
 import { env } from "./env"
 
-// TODO: having trouble making postgres support both local (doesn't support ssl) and remote (which requires ssl)...
+// having trouble making postgres support both local (doesn't support ssl) and remote (which requires ssl)...
 const databaseUrl = new URL(env.DATABASE_URL)
 type DBCredentials =
   | {
@@ -29,6 +29,7 @@ const dbCredentials: DBCredentials = databaseUrl.hostname.includes("localhost")
       database: databaseUrl.pathname.replace(/^\//, ""),
       ssl: "require",
     }
+
 export default {
   schema: "./src/schema/index.ts",
   dialect: "postgresql",
