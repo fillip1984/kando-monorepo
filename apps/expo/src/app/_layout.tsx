@@ -33,9 +33,10 @@ export default function RootLayout() {
 
       if (session) {
         // User is logged into Better Auth server, but we gate the UI with local biometrics
-        // const localized = await triggerLocalBiometrics()
-        // if (localized) {
-        // }
+        const localized = await triggerLocalBiometrics()
+        if (localized) {
+          console.log("User authenticated with biometrics, proceeding to app")
+        }
       } else {
         // No active server session found; push to primary authentication screen
         // router.replace("/login")
@@ -125,6 +126,15 @@ const Login = ({ biometricsAvailable }: { biometricsAvailable: boolean }) => {
   const handleSignIn = async () => {
     try {
       setLoading(true)
+
+      if (biometricsAvailable) {
+        const authenticated = await triggerLocalBiometrics()
+        if (!authenticated) {
+          toast.error("Biometric authentication failed")
+          return
+        }
+      }
+
       await authClient.signIn.social({
         provider: "google",
         callbackURL: "/",
