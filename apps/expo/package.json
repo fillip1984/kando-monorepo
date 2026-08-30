@@ -13,9 +13,10 @@
     "format": "prettier --check . --ignore-path ../../.gitignore --ignore-path .prettierignore",
     "lint": "eslint --flag unstable_native_nodejs_ts_config",
     "typecheck": "tsc --noEmit",
-    "build:interactive": "pnpm lint && pnpm with-env eas build -p ios -e production --local",
-    "build:production": "pnpm lint && pnpm with-env eas build -p ios -e production --local --non-interactive",
-    "with-env": "dotenv -e ../../.env --"
+    "build:interactive": "pnpm lint && pnpm with-env:prod eas build -p ios -e production --local",
+    "build:production": "pnpm lint && pnpm with-env:prod eas build -p ios -e production --local --non-interactive",
+    "with-env": "dotenv -e ../../.env --",
+    "with-env:prod": "dotenv -e ../../.env.prod --"
   },
   "dependencies": {
     "@better-auth/expo": "1.7.2",
