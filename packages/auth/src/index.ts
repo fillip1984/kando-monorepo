@@ -38,7 +38,6 @@ export function initAuth<
       google: {
         clientId: options.googleClientId,
         clientSecret: options.googleClientSecret,
-        redirectURI: `${options.productionUrl}/api/auth/callback/google`,
         disableImplicitSignUp: options.disableSignUps,
       },
     },
