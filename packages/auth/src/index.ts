@@ -68,7 +68,7 @@ const repairMangledExpoProxyUrl: BetterAuthPlugin = {
       before: request.url,
       after: repairedUrl.toString(),
     })
-    return { request: new Request(repairedUrl, request) }
+    return { request: new Request(repairedUrl.toString(), request) }
   },
 }
 
