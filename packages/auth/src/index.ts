@@ -14,6 +14,20 @@ import * as schema from "@kando/db/schema"
 const debugCallbackPlugin: BetterAuthPlugin = {
   id: "debug-oauth-callback",
   hooks: {
+    before: [
+      {
+        matcher: (ctx) => ctx.path?.startsWith("/sign-in/social") ?? false,
+        // eslint-disable-next-line @typescript-eslint/require-await
+        handler: createAuthMiddleware(async (ctx) => {
+          console.log("[auth-debug] sign-in/social request", {
+            contentLength: ctx.request?.headers.get("content-length"),
+            transferEncoding: ctx.request?.headers.get("transfer-encoding"),
+            contentType: ctx.request?.headers.get("content-type"),
+            body: JSON.stringify(ctx.body),
+          })
+        }),
+      },
+    ],
     after: [
       {
         matcher: (ctx) => ctx.path?.startsWith("/callback") ?? false,
