@@ -142,7 +142,6 @@ export const settingsRouter = createTRPCRouter({
             return { name: taskTag.tag.name }
           })
           for (const tag of tagsToReconnect) {
-            console.log({ existingTags })
             const tagId = existingTags.find(
               (existingTag) => existingTag.name === tag.name
             )?.id

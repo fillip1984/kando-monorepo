@@ -60,7 +60,6 @@ const KanbanBoard = ({ tasks }: { tasks: TaskType[] }) => {
         status,
         position: i,
       }))
-      console.log("drag ended", updates)
       await reorderTasks.mutateAsync({ updates })
     },
     plugins: [animations()],

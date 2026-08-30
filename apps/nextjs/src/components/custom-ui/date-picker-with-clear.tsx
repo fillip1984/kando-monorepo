@@ -56,7 +56,6 @@ export default function DatePickerWithClear({
               value !== "" ? parse(value, "yyyy-MM-dd", new Date()) : undefined
             }
             onSelect={(date) => {
-              console.log({ d: date ? format(date, "yyyy-MM-dd") : "" })
               handleOnChange(date ? format(date, "yyyy-MM-dd") : "")
               setIsOpen(false)
             }}

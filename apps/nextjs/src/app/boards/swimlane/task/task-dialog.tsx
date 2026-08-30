@@ -335,7 +335,6 @@ const TagsSection = ({ task }: { task: TaskType }) => {
   }, [task.id, task.taskTags])
 
   const handleSelectedTagsChange = async (nextSelectedTags: string[]) => {
-    console.log("handleSelectedTagsChange", nextSelectedTags)
     const previousSelectedTags = selectedTags
     setSelectedTags(nextSelectedTags)
 

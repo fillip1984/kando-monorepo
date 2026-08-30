@@ -44,7 +44,6 @@ export default function RootLayout() {
   }, [])
 
   const { data: session } = authClient.useSession()
-  console.log(session)
   if (session) {
     return <MainLayout />
   }
