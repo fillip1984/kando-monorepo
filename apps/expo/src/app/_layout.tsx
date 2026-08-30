@@ -1,6 +1,7 @@
 import "@/global.css"
 import { queryClient } from "@/utils/api"
 import { authClient } from "@/utils/auth"
+import { getBaseUrl } from "@/utils/base-url"
 import { triggerLocalBiometrics } from "@/utils/biometric-utils"
 import { colors } from "@/utils/color-utils"
 import { Lucide } from "@react-native-vector-icons/lucide"
@@ -98,6 +99,28 @@ const MainLayout = () => {
 
 const Login = ({ biometricsAvailable }: { biometricsAvailable: boolean }) => {
   const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    // checking if server is reachable
+    try {
+      fetch(`${getBaseUrl()}/api/health`)
+        .then((res) => res.json())
+        .then((data) => {
+          console.log("[health] server health check", data)
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+          if (data.status !== "ok") {
+            toast.error("Server is unreachable")
+          }
+        })
+        .catch((err) => {
+          console.error(err)
+          toast.error("Server is unreachable")
+        })
+    } catch (e) {
+      console.error(e)
+      toast.error("Server is unreachable")
+    }
+  }, [])
 
   const handleSignIn = async () => {
     try {
