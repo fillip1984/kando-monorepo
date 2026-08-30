@@ -12,6 +12,7 @@
     "build": "pnpm -r build",
     "build:expo": "pnpm -F @kando/expo build:interactive",
     "build:expo:production": "pnpm -F @kando/expo build:production",
+    "build:packages": "pnpm -r -F './packages/**' build",
     "clean": "git clean -xdf node_modules",
     "clean:workspaces": "pnpm -r clean",
     "db:push": "pnpm -F @kando/db push",

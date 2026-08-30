@@ -31,6 +31,5 @@ jobs:
           AUTH_DISABLE_SIGN_UPS: true
           PRODUCTION_URL: "https://kando.illizen.com"
         run: |
-          pnpm run build
-
-        # pnpx sst deploy --stage prod
+          pnpm run build:packages
+          pnpm sst deploy --stage prod
