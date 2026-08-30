@@ -1,5 +1,3 @@
-import Constants from "expo-constants"
-
 /**
  * Extend this function when going to production by
  * setting the baseUrl to your production API URL.
@@ -13,8 +11,8 @@ export const getBaseUrl = () => {
    * **NOTE**: This is only for development. In production, you'll want to set the
    * baseUrl to your production API URL.
    */
-  const debuggerHost = Constants.expoConfig?.hostUri
-  const localhost = debuggerHost?.split(":")[0]
+  // const debuggerHost = Constants.expoConfig?.hostUri
+  // const localhost = debuggerHost?.split(":")[0]
 
   // console.log("localhost:", localhost) <-- this comes out as 192.168.68.62 or whatever the laptop ip is
   // if (!localhost) {
@@ -26,8 +24,9 @@ export const getBaseUrl = () => {
 
   // We could grab the ip address of the debuggerHost but better-auth doesn't play nicely with it...
   // or google doesn't like that we're using a url that doesn't match a registered oauth redirect url
-  const baseUrl = !localhost
-    ? "https://kando.illizen.com"
-    : "http://localhost:3000"
-  return baseUrl
+  // const baseUrl = !localhost
+  //   ? "https://kando.illizen.com"
+  //   : "http://localhost:3000"
+  // return baseUrl
+  return process.env.SERVER_URL
 }

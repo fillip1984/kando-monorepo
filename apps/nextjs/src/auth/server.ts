@@ -9,8 +9,8 @@ import { initAuth } from "@kando/auth"
 import { env } from "@/env"
 
 export const auth = initAuth({
-  baseUrl: env.PRODUCTION_URL,
-  productionUrl: env.PRODUCTION_URL,
+  baseUrl: env.SERVER_URL,
+  productionUrl: env.SERVER_URL,
   disableSignUps: env.AUTH_DISABLE_SIGN_UPS,
   secret: env.AUTH_SECRET,
   googleClientId: env.AUTH_GOOGLE_ID,

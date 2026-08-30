@@ -7,7 +7,7 @@ const AUTH_SECRET = process.env.AUTH_SECRET
 const AUTH_DISABLE_SIGN_UPS = process.env.AUTH_DISABLE_SIGN_UPS
 const AUTH_GOOGLE_ID = process.env.AUTH_GOOGLE_ID
 const AUTH_GOOGLE_SECRET = process.env.AUTH_GOOGLE_SECRET
-const PRODUCTION_URL = process.env.PRODUCTION_URL
+const SERVER_URL = process.env.SERVER_URL
 
 if (!DATABASE_URL || !DATABASE_SCHEMA) {
   throw new Error(
@@ -33,8 +33,8 @@ if (!AUTH_GOOGLE_SECRET) {
   throw new Error("Missing required environment variable: AUTH_GOOGLE_SECRET")
 }
 
-if (!PRODUCTION_URL) {
-  throw new Error("Missing required environment variable: PRODUCTION_URL")
+if (!SERVER_URL) {
+  throw new Error("Missing required environment variable: SERVER_URL")
 }
 
 export default $config({
@@ -57,7 +57,7 @@ export default $config({
         AUTH_DISABLE_SIGN_UPS,
         AUTH_GOOGLE_ID,
         AUTH_GOOGLE_SECRET,
-        PRODUCTION_URL,
+        SERVER_URL,
       },
     })
   },
