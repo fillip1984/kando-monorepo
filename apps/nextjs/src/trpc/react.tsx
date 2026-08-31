@@ -60,5 +60,5 @@ export function TRPCReactProvider(props: { children: React.ReactNode }) {
 
 const getBaseUrl = () => {
   if (typeof window !== "undefined") return window.location.origin
-  return env.SERVER_URL
+  return env.EXPO_PUBLIC_SERVER_URL
 }

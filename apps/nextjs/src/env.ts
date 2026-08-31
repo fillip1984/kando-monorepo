@@ -18,7 +18,7 @@ export const env = createEnv({
     // now comes from dbEnv
     // POSTGRES_URL: z.url(),
     // POSTGRES_SCHEMA: z.string(),
-    SERVER_URL: z.url(),
+    EXPO_PUBLIC_SERVER_URL: z.url(),
   },
 
   /**
