@@ -1,10 +1,11 @@
-import { authClient } from "@/utils/auth"
+import { useAppStore } from "@/stores/app-store"
 import { Button, Form, Host, Section, Toggle } from "@expo/ui/swift-ui"
 import { useState } from "react"
 
 export default function SettingsScreen() {
+  const { setIsAuthenticated } = useAppStore()
   const handleSignOut = async () => {
-    await authClient.signOut()
+    await setIsAuthenticated(false)
   }
 
   const [notifications, setNotifications] = useState(false)

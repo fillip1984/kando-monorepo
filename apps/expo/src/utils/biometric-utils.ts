@@ -1,6 +1,7 @@
 import * as LocalAuthentication from "expo-local-authentication"
 
-export const verifyLocalBiometrics = async () => {
+export const checkIfBiometricsAvailable = async () => {
+  console.log("Checking if biometrics are available...")
   // 1. Verify device hardware supports biometrics
   const hasHardware = await LocalAuthentication.hasHardwareAsync()
   if (!hasHardware) return false
@@ -13,6 +14,7 @@ export const verifyLocalBiometrics = async () => {
 }
 
 export const triggerLocalBiometrics = async () => {
+  console.log("Triggering local biometrics authentication...")
   // 3. Trigger the operating system biometric modal
   const result = await LocalAuthentication.authenticateAsync({
     promptMessage: "Unlock your account",

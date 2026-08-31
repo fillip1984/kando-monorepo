@@ -1,55 +1,30 @@
 import "@/global.css"
+import { useAppStore } from "@/stores/app-store"
 import { queryClient } from "@/utils/api"
 import { authClient } from "@/utils/auth"
-import { getBaseUrl } from "@/utils/base-url"
-import { triggerLocalBiometrics } from "@/utils/biometric-utils"
+import {
+  checkIfBiometricsAvailable,
+  triggerLocalBiometrics,
+} from "@/utils/biometric-utils"
 import { colors } from "@/utils/color-utils"
 import { Lucide } from "@react-native-vector-icons/lucide"
 import { QueryClientProvider } from "@tanstack/react-query"
-import { Stack } from "expo-router"
-import { useEffect, useState } from "react"
+import { Stack, useFocusEffect } from "expo-router"
+import { useState } from "react"
 import { Pressable, Text, View } from "react-native"
 import { GestureHandlerRootView } from "react-native-gesture-handler"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { toast, Toaster } from "sonner-native"
 
 export default function RootLayout() {
-  // const [biometricsAvailable, setBiometricsAvailable] = useState(false)
-  // useEffect(() => {
-  //   const checkBiometrics = async () => {
-  //     const canUseBiometrics =
-  //       (await LocalAuthentication.hasHardwareAsync()) &&
-  //       (await LocalAuthentication.isEnrolledAsync())
-  //     setBiometricsAvailable(canUseBiometrics)
-  //   }
-  //   void checkBiometrics()
-  // }, [])
+  // const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const { isAuthenticated, setIsAuthenticated } = useAppStore()
 
-  // useEffect(() => {
-  //   const checkAppAccess = async () => {
-  //     // Better Auth checks if a session token natively exists in Expo SecureStore
-  //     const { data: session } = await authClient.getSession()
-
-  //     if (session) {
-  //       // User is logged into Better Auth server, but we gate the UI with local biometrics
-  //       const localized = await triggerLocalBiometrics()
-  //       if (localized) {
-  //         console.log("User authenticated with biometrics, proceeding to app")
-  //       }
-  //     } else {
-  //       // No active server session found; push to primary authentication screen
-  //       // router.replace("/login")
-  //     }
-  //   }
-  //   void checkAppAccess()
-  // }, [])
-
-  const { data: session } = authClient.useSession()
-  if (session) {
+  if (isAuthenticated()) {
     return <MainLayout />
+  } else {
+    return <Login setIsAuthenticated={setIsAuthenticated} />
   }
-
-  return <Login biometricsAvailable={false} />
 }
 
 const MainLayout = () => {
@@ -97,47 +72,24 @@ const MainLayout = () => {
   )
 }
 
-const Login = ({ biometricsAvailable }: { biometricsAvailable: boolean }) => {
+const Login = ({
+  setIsAuthenticated,
+}: {
+  setIsAuthenticated: (value: boolean) => void
+}) => {
   const [loading, setLoading] = useState(false)
-
-  useEffect(() => {
-    // checking if server is reachable
-    try {
-      fetch(`${getBaseUrl()}/api/health`)
-        .then((res) => res.json())
-        .then((data) => {
-          console.log("[health] server health check", data)
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-          if (data.status !== "ok") {
-            toast.error("Server is unreachable")
-          }
-        })
-        .catch((err) => {
-          console.error(err)
-          toast.error("Server is unreachable")
-        })
-    } catch (e) {
-      console.error(e)
-      toast.error("Server is unreachable")
-    }
-  }, [])
+  const [isBiometricsAvailable, setIsBiometricsAvailable] = useState(false)
+  const { data: session } = authClient.useSession()
 
   const handleSignIn = async () => {
     try {
       setLoading(true)
 
-      if (biometricsAvailable) {
-        const authenticated = await triggerLocalBiometrics()
-        if (!authenticated) {
-          toast.error("Biometric authentication failed")
-          return
-        }
-      }
-
       await authClient.signIn.social({
         provider: "google",
         callbackURL: "/",
       })
+      setIsAuthenticated(true)
     } catch (e) {
       console.error(e)
       toast.error(`Unknown error: ${e as Error}. Please try again.`)
@@ -145,6 +97,27 @@ const Login = ({ biometricsAvailable }: { biometricsAvailable: boolean }) => {
       setLoading(false)
     }
   }
+
+  // check if user has previously enrolled biometrics and use them to authenticate
+  useFocusEffect(() => {
+    const authenticateWithBiometrics = async () => {
+      setIsBiometricsAvailable(await checkIfBiometricsAvailable())
+      if (isBiometricsAvailable) {
+        const authenticatedViaBiometrics = await triggerLocalBiometrics()
+        if (authenticatedViaBiometrics) {
+          setIsAuthenticated(true)
+        }
+      }
+    }
+
+    if (!session) {
+      console.log(
+        "[login] user does not have a session, user must log in before biometrics can be used"
+      )
+    } else {
+      void authenticateWithBiometrics()
+    }
+  })
 
   return (
     <GestureHandlerRootView>
@@ -164,8 +137,8 @@ const Login = ({ biometricsAvailable }: { biometricsAvailable: boolean }) => {
             </Pressable>
             <Pressable
               onPress={triggerLocalBiometrics}
-              className={`rounded bg-slate-600 p-3 ${!biometricsAvailable ? "opacity-50" : ""}`}
-              disabled={!biometricsAvailable}
+              className={`rounded bg-slate-600 p-3 ${!isBiometricsAvailable ? "opacity-50" : ""}`}
+              disabled={!isBiometricsAvailable}
             >
               <Lucide name="scan-face" size={42} color="white" />
             </Pressable>
