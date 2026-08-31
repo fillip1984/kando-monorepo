@@ -7,7 +7,6 @@ import {
   triggerLocalBiometrics,
 } from "@/utils/biometric-utils"
 import { colors } from "@/utils/color-utils"
-import { Lucide } from "@react-native-vector-icons/lucide"
 import { QueryClientProvider } from "@tanstack/react-query"
 import { Stack, useFocusEffect } from "expo-router"
 import { useState } from "react"
@@ -85,12 +84,13 @@ const Login = ({
   const handleSignIn = async () => {
     try {
       setLoading(true)
-
       await authClient.signIn.social({
         provider: "google",
         callbackURL: "/",
       })
-      setIsAuthenticated(true)
+
+      // couldn't set isAuthenticated to true here because user could click cancel on the prompt to open a web browser to authenticate
+      // instead user will be prompted for face id and that will authenticate. If they don't elect for biometrics they won't be able to log in
     } catch (e) {
       console.error(e)
       toast.error(`Unknown error: ${e as Error}. Please try again.`)
@@ -135,13 +135,6 @@ const Login = ({
               ) : (
                 <Text className="text-xl font-bold text-black">Login</Text>
               )}
-            </Pressable>
-            <Pressable
-              onPress={triggerLocalBiometrics}
-              className={`rounded bg-slate-600 p-3 ${!isBiometricsAvailable ? "opacity-50" : ""}`}
-              disabled={!isBiometricsAvailable}
-            >
-              <Lucide name="scan-face" size={42} color="white" />
             </Pressable>
           </View>
         </View>
