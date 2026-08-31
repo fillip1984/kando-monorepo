@@ -1,25 +1,32 @@
-name: CI
+name: Deploy
 
 on:
-  push:
+  workflow_dispatch:
+  workflow_run:
+    workflows:
+      - Build
+    types:
+      - completed
     branches:
       - main
+      - master
 
 jobs:
   deploy:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v6
+        uses: pnpm/action-setup@v4
         with:
           cache: true
           run_install: true
 
-      - name: Build and Deploy
+      - name: Deploy
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -30,6 +37,4 @@ jobs:
           AUTH_GOOGLE_SECRET: ${{ secrets.AUTH_GOOGLE_SECRET }}
           AUTH_DISABLE_SIGN_UPS: false
           SERVER_URL: "https://kando.illizen.com"
-        run: |
-          pnpm run build:packages
-          pnpm sst deploy --stage prod
+        run: pnpm sst deploy --stage prod
