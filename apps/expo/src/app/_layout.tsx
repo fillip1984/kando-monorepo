@@ -81,6 +81,7 @@ const Login = ({
   const [isBiometricsAvailable, setIsBiometricsAvailable] = useState(false)
   const { data: session } = authClient.useSession()
 
+  // authenticate using google social login
   const handleSignIn = async () => {
     try {
       setLoading(true)
